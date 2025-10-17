@@ -1,0 +1,28 @@
+{#
+/**
+ * @file
+ * Theme override to display a single-level Bootstrap-compatible menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - title: The menu link title.
+ *   - url: The menu link URL, instance of \Drupal\Core\Url
+ *   - in_active_trail: TRUE if the link is in the active trail.
+ */
+#}
+
+{% if items %}
+  <ul class="navbar-nav d-flex" id="main-navigation" role="menubar">
+    {% for item in items %}
+      {# set active class if item is in active trail #}
+      {% set active = item.in_active_trail ? 'active' : '' %}
+      <li class="nav-item {{ active }}" role="none">
+        <a class="nav-link {{ active }}" href="{{ item.url }}" role="menuitem" title="{{ item.title }}">
+          {{ item.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

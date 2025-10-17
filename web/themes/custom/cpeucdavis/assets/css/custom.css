@@ -1,0 +1,8 @@
+nav.tabs ul.tabs__nav > li.nav-item .nav-link {
+    color: black;
+}
+
+nav.tabs .tabs__nav {
+    display: flex;
+    justify-content: space-around;
+}

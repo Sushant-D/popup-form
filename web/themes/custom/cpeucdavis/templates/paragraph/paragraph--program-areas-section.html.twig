@@ -1,0 +1,75 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a Program Area paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+    <section {{ attributes.addClass(classes, 'program-area-section').setAttribute('aria-label', 'Program Areas') }}>
+      
+      {# Set up content variables for cleaner code #}
+      {% set heading = paragraph.field_heading.value %}
+      {% set highlight_word = paragraph.field_highlight_word.value %}
+      {% set overlay_text = paragraph.field_overlay_text.value %}
+      {% set description = paragraph.field_description.value %}
+      {% set media = paragraph.field_image.entity %}
+
+      {# Background image section #}
+      {% if media and media.field_media_image and not media.field_media_image.isEmpty() %}
+        {% set image_style = content.field_image.0['#image_style'] ?? null %}
+        {% set image_uri = media.field_media_image.entity.fileuri %}
+        {% set image_url = image_style ? image_uri|image_style(image_style) : file_url(image_uri) %}
+        {% set image_alt = media.field_media_image.alt|default('') %}
+        
+        <div class="program-area-decoration">
+          <img 
+            src="{{ image_url }}" 
+            alt="{{ image_alt }}" 
+            class="program-area-bg-img">
+        </div>
+      {% endif %}
+
+      {# Title section #}
+      {% if heading or highlight_word %}
+        <div class="program-area-title">
+          <h2 class="title-com-program-area">
+            {% if heading %}
+              <span class="title-solid">{{ heading }}</span>
+            {% endif %}
+            {% if highlight_word %}
+              <span class="title-outline">{{ highlight_word }}</span>
+            {% endif %}
+          </h2>
+        </div>
+      {% endif %}
+
+      {# Content panels #}
+      {% if overlay_text or description %}
+        <div class="panel-area-wrap">
+          {% if overlay_text %}
+            <div class="left-panel-area">
+              <h2>{{ overlay_text }}</h2>
+            </div>
+          {% endif %}
+
+          {% if description %}
+            <div class="right-panel-area">
+              {{ description|render|replace({'<p>': '<p class="description">'})|raw }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+    </section>
+  {% endblock %}
+{% endblock paragraph %}

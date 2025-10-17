@@ -1,0 +1,84 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+    {% block content %}
+        <section {{ attributes.addClass(classes).setAttribute('aria-label', 'Program benefits').addClass('benefits-section') }}>
+            <div class="benefits-content"> 
+                {% if paragraph.field_benefits_content_grid %}
+                    {% for item in paragraph.field_benefits_content_grid %}
+                        {% set image_style = item.entity.field_image.0['#image_style'] ?? null %}
+                        {% set media = item.entity.field_image.entity %}
+                        {% set image_url = media.field_media_image.entity.fileuri %}
+                        
+                        {# Set benefit item classes based on whether image exists #}
+                        {% set benefit_classes = ['benefit-item'] %}
+                        {% if image_url %}
+                            {% set benefit_classes = benefit_classes|merge(['has-background']) %}
+                        {% endif %}
+                        
+                        {# {{dump(media)}} #}
+                        <div class="{{ benefit_classes|join(' ') }}">
+                            {% if image_url %}
+                                {# Apply image style if one exists, otherwise use direct file URL #}
+                                {% if image_style %}
+                                    {% set image_url = image_url|image_style(image_style) %}
+                                {% else %}
+                                    {% set image_url = file_url(image_url) %}
+                                {% endif %}
+                                
+                                <div class="benefit-bg" style="background-image: url('{{image_url}}');"></div>
+                                <div class="benefit-overlay"></div>
+                            {% endif %}
+                            
+                            {% if item.entity.field_heading.value %}
+                                <h3 class="benefit-title">{{ item.entity.field_heading.value }}</h3>
+                            {% endif %}
+                            
+                            {% if item.entity.field_description.value %}
+                                {{ item.entity.field_description.value|render|replace({'<p>': '<p class="benefit-description">'})|raw }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {# Benefits Banner Image Processing - Extract image URL with optional image style applied #}
+            {% set image_style = content.field_image.0['#image_style'] ?? null %}
+            {% set banner_media = paragraph.field_image.entity %}
+            
+            {% if banner_media %}
+                {% set image_url = banner_media.field_media_image.entity.fileuri %}
+                {# Apply image style if one exists, otherwise use direct file URL #}
+                {% if image_style %}
+                    {% set image_url = image_url|image_style(image_style) %}
+                {% else %}
+                    {% set image_url = file_url(image_url) %}
+                {% endif %}
+                {# Get image file object for additional properties (alt text, etc.) #}
+                {% set image_file = banner_media.field_media_image.0 ?? null %}
+                
+                <div class="benefits-image-container">
+                    <img 
+                    src="{{ image_url }}" 
+                    alt="{{ image_file.alt|default('') }}" 
+                    class="img-fluid position-relative">
+                    <div class="yellow-overlay"></div>
+                    <div class="benefits-text" aria-hidden="true">{{ paragraph.field_heading.value }}</div>
+                </div>
+            {% endif %}
+        </section>
+    {% endblock %}
+{% endblock paragraph %}

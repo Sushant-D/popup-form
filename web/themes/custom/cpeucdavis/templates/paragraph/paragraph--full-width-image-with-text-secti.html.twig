@@ -1,0 +1,48 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+    {% block content %}
+
+        {% set image_style = content.field_image.0['#image_style'] ?? null %}
+        {% set media = paragraph.field_image.entity %}
+        {% set image_url = media.field_media_image.entity.fileuri %}
+        {# Apply image style if one exists, otherwise use direct file URL #}
+        {% if image_style %}
+            {% set image_url = image_url|image_style(image_style) %}
+        {% else %}
+            {% set image_url = file_url(image_url) %}
+        {% endif %}
+        {# Get image file object for additional properties (alt text, etc.) #}
+        {% set image_file = media.field_media_image.0 ?? null %}
+
+        <section {{ attributes.addClass(classes).setAttribute('id', 'home').setAttribute('aria-labelledby', 'bg-full-img-heading').addClass('bg-full-img-section') }}>
+            <div class="bg-full-img-background">
+            <img 
+            src="{{ image_url }}" 
+            alt="{{ image_file.alt|default('') }}" 
+            class="img-fluid position-relative">
+            {# <img src="./images/a09fd23bd882895495d343cbbe02fe8a9c46c172.png" alt=""> #}
+            </div>
+            <div class="bg-full-img-overlay"></div>
+            <div class="bg-full-img-content">
+            <h1 id="bg-full-img-heading" class="bg-full-img-title">
+                <span class="bg-full-img-title-solid">{{paragraph.field_heading.value}}</span>
+                <span class="bg-full-img-title-outline">{{paragraph.field_highlight_word.value}}</span>
+            </h1>
+            </div>
+        </section>
+    {% endblock %}
+{% endblock paragraph %}

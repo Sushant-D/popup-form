@@ -1,0 +1,64 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+
+        {# User pathway Link Processing - Extract link text and prepare URL variables #}
+        
+        <section {{ attributes.addClass(classes).setAttribute('aria-label', 'User type selection').addClass('user-type-section') }}>
+        {# <section class="user-type-section" aria-label="User type selection"> #}
+            <div class="container">
+                <div class="user-type-content">
+                    {{ content.field_banner_title['#items'].0.value|render|replace({'<p>': '<p class="user-type-label">'})|raw }}
+                    {% if content.field_banner_cta['#items'] %}
+                        {% for key, item in content.field_banner_cta['#items'] %}
+                            {% set cta_text = item.title %}
+                            {% set cta_uri = item.uri %}
+                            
+                            {# Check if it's an anchor link (internal:#anchor) #}
+                            {% if cta_uri starts with 'internal:#' %}
+                                {# It's an anchor link - remove 'internal:' prefix #}
+                                {% set field_banner_cta_link = cta_uri|replace({'internal:': ''}) %}
+                            {% elseif cta_uri starts with '#' %}
+                                {# Already a proper anchor link #}
+                                {% set field_banner_cta_link = cta_uri %}
+                            {% elseif content.field_banner_cta[key]['#url'].external %}
+                                {# External link - use the raw URI #}
+                                {% set field_banner_cta_link = content.field_banner_cta[key]['#url'].uri %}
+                            {% else %}
+                                {# Internal link - generate proper Drupal path #}
+                                {% set field_banner_cta_link = path(content.field_banner_cta[key]['#url'].routeName, content.field_banner_cta[key]['#url'].routeParameters) %}
+                                
+                                {# Check if the URI contains a fragment (anchor) #}
+                                {% if cta_uri matches '/.*#.+$/' %}
+                                    {# Extract the fragment and append it to the path #}
+                                    {% set fragment = cta_uri|split('#')|last %}
+                                    {% set field_banner_cta_link = field_banner_cta_link ~ '#' ~ fragment %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            <a href="{{ field_banner_cta_link }}"  class="user-type-link" aria-label="{{ cta_text }}">{{ cta_text }}</a>
+                        {% endfor %}
+                    {% endif %}
+
+                    {# <a href="#" class="user-type-link">Working Professional</a>
+                    <a href="#" class="user-type-link">UC Davis Employee</a>
+                    <a href="#" class="user-type-link">Leader Looking for Group Training</a> #}
+                </div>
+            </div>
+        </section>
+  {% endblock %}
+{% endblock paragraph %}

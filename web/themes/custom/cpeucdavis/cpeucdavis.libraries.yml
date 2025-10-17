@@ -1,0 +1,23 @@
+global-styling:
+  version: VERSION
+  js:
+    assets/js/bootstrap.bundle.min.js: {}
+    assets/js/init.js: {}
+    assets/js/owl.carousel.min.js: {}
+    assets/js/statsCounter.js: {}
+    assets/js/script.js: {}
+  css:
+    component:
+      assets/css/bootstrap.min.css: {}
+      assets/css/fontawesome.all.min.css: {}
+      assets/css/fontawesome.min.css: {}
+      assets/css/owl.carousel.min.css: {}
+      assets/css/owl.theme.default.min.css: {}
+      assets/css/custom.css: {}
+      assets/css/style.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/once
+    

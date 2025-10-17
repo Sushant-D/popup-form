@@ -1,0 +1,91 @@
+{#
+/**
+ * @file
+ * Header template for UC Davis CPE theme.
+ *
+ * Available variables:
+ * - page: A list of regions for this page
+ * - enquire_link: Custom enquire link variable
+ */
+#}
+<header>
+  {{ page.top_header }}
+  
+  <nav class="navbar" aria-label="Main site navigation">
+    <div class="container-fluid">
+      {% if page.site_branding %}
+        {{ page.site_branding }}
+      {% else %}
+        <a class="navbar-brand" href="{{ url('<front>') }}" aria-label="Go to UCDavis homepage">
+          <img src="{{ base_path ~ directory }}/images/UC Davis Logo.png" alt="UC Davis Logo">
+        </a>
+      {% endif %}
+
+      {# Desktop Navigation Menu #}
+      {% if page.primary_menu %}
+        {{ page.primary_menu }}
+      {% else %}
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Our Programs'|t }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Organizational Training'|t }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Campus Partnerships'|t }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Why Choose Us'|t }}</a></li>
+        </ul>
+      {% endif %}
+
+      {# Header Form or Default CTA Button #}
+      {% if page.header_form %}
+        {{ page.header_form }}
+      {% else %}
+        <a href="#" class="yellowBtn desktop-only" aria-label="Start a Conversation" role="button">
+          {{ 'Start a Conversation'|t }}
+        </a>
+      {% endif %}
+
+      {# Mobile Menu Toggle Button #}
+      <button class="navbar-toggler" id="navToggler" aria-label="Toggle navigation" aria-expanded="false">
+        <div class="navbar-toggler-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+    </div>
+  </nav>
+
+  {# Mobile Menu #}
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      {% if page.site_branding %}
+        {{ page.site_branding }}
+      {% else %}
+        <a href="{{ url('<front>') }}" aria-label="Go to UCDavis homepage">
+          <img src="{{ base_path ~ directory }}/images/UC Davis Logo.png" alt="UC Davis Logo">
+        </a>
+      {% endif %}
+      <button class="btn-close" id="closeMenu" aria-label="Close">&times;</button>
+    </div>
+    <div class="mobile-menu-body">
+      {# Mobile Navigation Menu #}
+      {% if page.primary_menu %}
+        {{ page.primary_menu }}
+      {% else %}
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Our Programs'|t }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Organizational Training'|t }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Campus Partnerships'|t }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="">{{ 'Why Choose Us'|t }}</a></li>
+        </ul>
+      {% endif %}
+      
+      {# Mobile Header Form or Default CTA Button #}
+      {% if page.header_form %}
+        {{ page.header_form }}
+      {% else %}
+        <a href="#" class="yellowBtn" aria-label="Start a Conversation" role="button">
+          {{ 'Start a Conversation'|t }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</header>

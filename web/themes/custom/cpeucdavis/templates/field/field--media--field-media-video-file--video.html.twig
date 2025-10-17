@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Theme override for video media field.
+ */
+#}
+{% if label_hidden %}
+  {% if multiple %}
+    {% for item in items %}
+      {{ item.content }}
+    {% endfor %}
+  {% else %}
+    {% for item in items %}
+      {{ item.content }}
+    {% endfor %}
+  {% endif %}
+{% else %}
+  <div{{ title_attributes.addClass('field__label') }}>{{ label }}</div>
+  {% for item in items %}
+    {{ item.content }}
+  {% endfor %}
+{% endif %}

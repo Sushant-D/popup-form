@@ -1,0 +1,36 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+    <section {{ attributes.addClass(classes).setAttribute('aria-label', 'Program statistics').addClass('stats-section') }}>
+      <div class="container">
+        <div class="stats-grid">
+          {% for item in content.field_statistics_section['#items'] %}
+            {% set stat_paragraph = item.entity %}
+            {% if stat_paragraph %}
+              <div class="stat-item">
+                <div class="stat-number" aria-label="{{ stat_paragraph.field_stat_number.value }} {{ stat_paragraph.field_stat_suffix.value }}">
+                  {{ stat_paragraph.field_stat_number.value }}{{ stat_paragraph.field_stat_suffix.value }}
+                </div>
+                {{ stat_paragraph.field_stat_label.value|render|replace({'<p>': '<p class="stat-label">'})|raw }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endblock %}
+{% endblock paragraph %}

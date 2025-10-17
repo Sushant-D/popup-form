@@ -1,0 +1,104 @@
+{#
+/**
+ * @file
+ * Theme override for a field.
+ *
+ * To override output, copy the "field.html.twig" from the templates directory
+ * to your theme's directory and customize it, just like customizing other
+ * Drupal templates such as page.html.twig or node.html.twig.
+ *
+ * Instead of overriding the theming for all fields, you can also just override
+ * theming for a subset of fields using
+ * @link themeable Theme hook suggestions. @endlink For example,
+ * here are some theme hook suggestions that can be used for a field_foo field
+ * on an article node type:
+ * - field--node--field-foo--article.html.twig
+ * - field--node--field-foo.html.twig
+ * - field--node--article.html.twig
+ * - field--field-foo.html.twig
+ * - field--text-with-summary.html.twig
+ * - field.html.twig
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - label_hidden: Whether to show the field label or not.
+ * - title_attributes: HTML attributes for the title.
+ * - label: The label for the field.
+ * - multiple: TRUE if a field can contain multiple items.
+ * - items: List of all the field items. Each item contains:
+ *   - attributes: List of HTML attributes for each item.
+ *   - content: The field item's content.
+ * - entity_type: The entity type to which the field belongs.
+ * - field_name: The name of the field.
+ * - field_type: The type of the field.
+ * - label_display: The display settings for the label.
+ *
+ *
+ * @see template_preprocess_field()
+ */
+#}
+{%
+  set classes = [
+    'field',
+    'field--name-' ~ field_name|clean_class,
+    'field--type-' ~ field_type|clean_class,
+    'field--label-' ~ label_display,
+    label_display == 'inline' ? 'clearfix',
+  ]
+%}
+{%
+  set title_classes = [
+    'field__label',
+    label_display == 'visually_hidden' ? 'visually-hidden',
+  ]
+%}
+
+{% if label_hidden %}
+  {% if multiple %}
+      {% for item in items %}
+        {% set paragraph_entity = item.content['#paragraph'] %}
+          {% set image_url = '' %}
+          {% set entity = item.content['#paragraph'] %}
+          {% set media = entity.field_icon.entity %}
+          {% set image_file = media.field_media_image.0 ?? null %}
+          {% if image_file %}
+            {% set image_uri = image_file.entity.uri.value %}
+            {% set image_style = '' %}
+
+            {% set image_url = image_style 
+              ? image_uri|image_style(image_style) 
+              : file_url(image_uri) 
+            %}
+          {% endif %}
+          <div class="banner__shop-categories-item flex-1 flex flex-col items-center">
+            <img src="{{ image_url }}" alt="" class="mb-5" />
+            <h5>{{ paragraph_entity.field_heading.value|raw }}</h5>
+            <div class="text--lg">
+              {{ paragraph_entity.field_subheading.value|raw }}
+            </div>
+
+            {% if paragraph_entity.field_link.0 %}
+              <a class="button button--outline" href="{{ paragraph_entity.field_link.0.url }}" target="_blank">{{ paragraph_entity.field_link.0.title }}</a>
+            {% endif %}
+
+          </div>
+      {% endfor %}
+  {% else %}
+    {% for item in items %}
+      <div{{ attributes.addClass(classes, 'field__item') }}>{{ item.content }}</div>
+    {% endfor %}
+  {% endif %}
+{% else %}
+  <div{{ attributes.addClass(classes) }}>
+    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+    {% if multiple %}
+      <div class="field__items">
+    {% endif %}
+    {% for item in items %}
+      <div{{ item.attributes.addClass('field__item') }}>{{ item.content }}</div>
+    {% endfor %}
+    {% if multiple %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

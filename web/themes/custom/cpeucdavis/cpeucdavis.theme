@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Functions to support theming in the SASS Starterkit subtheme.
+ */
+
+use Drupal\node\Entity\Node;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements template_preprocess_page().
+ *
+ * Adds theme settings variables to page templates.
+ *
+ * @param array $variables
+ *   An associative array containing variables for the page template.
+ */
+function cpeucdavis_preprocess_page(array &$variables) {
+    // Social media links
+    $variables['facebook_link'] = theme_get_setting('facebook_link');
+    $variables['linkedin_link'] = theme_get_setting('linkedin_link');
+    $variables['youtube_link'] = theme_get_setting('youtube_link');
+    $variables['twitter_link'] = theme_get_setting('twitter_link');
+    $variables['instagram_link'] = theme_get_setting('instagram_link');
+    
+    // Header settings
+    $variables['start_conversation_link'] = theme_get_setting('start_conversation_link');
+    
+    // Footer description section (grouped fields)
+    $variables['footer_description_title'] = theme_get_setting('footer_description_title');
+    $variables['footer_description'] = theme_get_setting('footer_description');
+    $variables['footer_description_tagline'] = theme_get_setting('footer_description_tagline');
+    
+    // Copyright text
+    $variables['copyright_text'] = theme_get_setting('copyright_text');
+
+    // Admin container section
+    $variables['admin_container_title'] = theme_get_setting('admin_container_title');
+    $variables['admin_container_description'] = theme_get_setting('admin_container_description');
+    $variables['admin_mail_address'] = theme_get_setting('admin_mail_address');
+
+    // Classroom container section
+    $variables['classroom_container_title'] = theme_get_setting('classroom_container_title');
+    $variables['classroom_container_description'] = theme_get_setting('classroom_container_description');
+    $variables['classroom_mail_address'] = theme_get_setting('classroom_mail_address');
+
+    // Footer background image
+    $footer_bg_media_id = theme_get_setting('footer_background_image');
+    if ($footer_bg_media_id) {
+        $media = \Drupal\media\Entity\Media::load($footer_bg_media_id);
+        if ($media && $media->hasField('field_media_image')) {
+            $image_field = $media->get('field_media_image');
+            if (!$image_field->isEmpty()) {
+                $file = $image_field->entity;
+                if ($file) {
+                    $variables['footer_background_image_url'] = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+                    $variables['footer_background_image_alt'] = $image_field->alt ?? '';
+                }
+            }
+        }
+    }
+
+}

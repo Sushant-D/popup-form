@@ -1,0 +1,123 @@
+{#
+/**
+ * @file
+ * Theme override to display a menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A nested list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - below: The menu item child items.
+ *   - title: The menu link title.
+ *   - url: The menu link URL, instance of \Drupal\Core\Url
+ *   - localized_options: Menu link localized options.
+ *   - is_expanded: TRUE if the link has visible children within the current
+ *     menu tree.
+ *   - is_collapsed: TRUE if the link has children within the current menu tree
+ *     that are not currently visible.
+ *   - in_active_trail: TRUE if the link is in the active trail.
+ */
+#}
+{% import _self as menus %}
+
+{#
+  We call a macro which calls itself to render the full tree.
+  @see https://twig.symfony.com/doc/3.x/tags/macro.html
+#}
+{{ menus.menu_links(items, attributes, 0) }}
+
+{% macro menu_links(items, attributes, menu_level) %}
+  {% import _self as menus %}
+    {% if menu_level == 0 %}
+      <ul id="mega-menu-menu-1" class="mega-menu max-mega-menu mega-menu-horizontal mega-no-js" data-event="hover_intent" data-effect="slide_up" data-effect-speed="200" data-effect-mobile="disabled" data-effect-speed-mobile="0" data-panel-width="body" data-panel-inner-width=".container" data-mobile-force-width="body" data-second-click="go" data-document-click="collapse" data-vertical-behaviour="standard" data-breakpoint="768" data-unbind="true" data-mobile-state="collapse_all" data-mobile-direction="vertical" data-hover-intent-timeout="300" data-hover-intent-interval="100">
+          {% if items %}
+            {% for item in items %}
+              {% set active = item.in_active_trail ? 'active': '' %}
+              {% if item.below %}
+                {% if item.url.getOption('attributes').link_type in 'mega_menu' %}
+                <li class="nav-item element {{active}}">
+                    <a class="nav-link" title="{{ item.title }}" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="{{ item.url }}">
+                      {{ item.title }} 
+                      <svg class="right-svg" xmlns="http://www.w3.org/2000/svg" width="247.5" height="150" viewBox="0 0 247.5 150">
+                        <path data-name="Path 40189" d="M435.2,199.67l-98.281,97.316-98.879-96.7L213.475,225.7,336.328,349.67,460.975,226.319Z" transform="translate(-213.475 -199.67)" fill="#1a1a1a" fill-rule="evenodd"></path>
+                      </svg>
+                    </a>
+                    <ul class="dropdown-menu element-menu">
+                      {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                    </ul>
+                </li>
+                {% else %}
+                <li class="mega-menu-item mega-menu-item-type-post_type mega-menu-item-object-page mega-menu-item-has-children mega-menu-megamenu mega-menu-grid mega-align-bottom-left mega-menu-grid mega-menu-item-149" id="mega-menu-item-149">
+                  <a class="mega-menu-link" title="{{ item.title }}" role="button" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-expanded="false" href="{{ item.url }}">
+                    {{ item.title }}
+                    <span class="mega-indicator" aria-hidden="true"></span>
+                  </a>
+                  <ul class="mega-sub-menu" role='presentation'>
+                    {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                  </ul>
+                </li>
+                {% endif %}
+              {% else %}
+                <li class="mega-menu-item mega-menu-item-type-post_type mega-menu-item-object-page mega-menu-item-has-children mega-menu-megamenu mega-menu-grid mega-align-bottom-left mega-menu-grid mega-menu-item-149" id="mega-menu-item-149">
+                  <a class="mega-menu-link {{active}}" href="{{ item.url }}" role="button" title="{{ item.title }}">
+                   {{ item.title }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </ul>
+    {% elseif menu_level == 1 %}
+      {% if items %}
+          {% for item in items %}
+            {% if item.below %}
+                {% if item.url.getOption('attributes').link_type in 'mega_menu_1' %}
+                <li class="colm-1">
+                    <ul class="list-unstyled">
+                      {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                    </ul>
+                </li>
+                {% else %}
+                <li class="sub-menu dropdown">
+                  <a class="dropdown-item" title="{{ item.title }}" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="{{ item.url }}">
+                      {{ item.title }}   
+                  </a>
+                  <ul class="dropdown-menu about-menu">
+                    {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                  </ul>
+                </li>
+                {% endif %}
+            {% else %}
+            <li class="mega-menu-row" id="mega-menu-149-0">
+              <a class="mega-menu-link" role="button" title="{{ item.title }}" href="{{ item.url }}">{{ item.title }}</a>
+            </li>
+            {% endif %}
+          {% endfor %}
+      {% endif %}
+    {% elseif menu_level == 2 %}
+        {% if items %}
+          {% for item in items %}
+            {% if item.below %}
+              <li class="sub-menu dropdown">
+                  <a class="dropdown-item" role="button" title="{{ item.title }}" href="{{ item.url }}">{{ item.title }}</a>
+                <ul class="dropdown-menu">
+                  {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                </ul>
+              </li>
+            {% else %}
+              <li class="sub-menu">
+                <a class="dropdown-item" role="button" title="{{ item.title }}" href="{{ item.url }}">{{ item.title }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+    {% elseif menu_level == 3 %}
+        {% if items %}
+          {% for item in items %}
+            <li class="dropdown-item">
+              <a href="{{ item.url }}" role="button" title="{{ item.title }}">{{ item.title }}</a>
+            </li>
+          {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endmacro %}

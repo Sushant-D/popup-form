@@ -1,0 +1,63 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a Three Column Benefits Grid paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+    <section {{ attributes.addClass(classes, 'program-benefits-section', 'grid-benefit-wrap').setAttribute('aria-label', 'Program benefits') }}>
+      {% if paragraph.field_feature_card and not paragraph.field_feature_card.isEmpty() %}
+        <div class="program-benefits-content">
+          {% for item in paragraph.field_feature_card %}
+            {% if item.entity %}
+              {# Set up variables for cleaner code #}
+              {% set card_entity = item.entity %}
+              {% set media = card_entity.field_image.entity %}
+              {% set heading = card_entity.field_heading.value %}
+              {% set description = card_entity.field_description.value %}
+              
+              {# Set item classes based on whether image exists #}
+              {% set item_classes = ['program-benefit-item'] %}
+              {% if media %}
+                {% set item_classes = item_classes|merge(['program-benefit-img-show']) %}
+              {% endif %}
+              
+              <div class="{{ item_classes|join(' ') }}">
+                {% if media and media.field_media_image and not media.field_media_image.isEmpty() %}
+                  {# Process image URL with optional image style #}
+                  {% set image_style = card_entity.field_image.0['#image_style'] ?? null %}
+                  {% set image_uri = media.field_media_image.entity.fileuri %}
+                  {% set image_url = image_style ? image_uri|image_style(image_style) : file_url(image_uri) %}
+                  {% set image_alt = media.field_media_image.alt|default('') %}
+                  
+                  <div class="program-benefit-bg" style="background-image: url('{{ image_url }}');" role="img" aria-label="{{ image_alt }}"></div>
+                  <div class="program-benefit-overlay"></div>
+                {% endif %}
+                
+                <div class="program-benefit-content">
+                  {% if heading %}
+                    <h3 class="program-benefit-title">{{ heading }}</h3>
+                  {% endif %}
+                  
+                  {% if description %}
+                    {{ description|render|replace({'<p>': '<p class="program-benefit-description">'})|raw }}
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </section>
+  {% endblock %}
+{% endblock paragraph %}

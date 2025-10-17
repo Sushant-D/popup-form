@@ -1,0 +1,141 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ *
+ * (header comments omitted for brevity in this snippet — left as in your original)
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+{% block paragraph %}
+    {% block content %}
+
+        <section {{ attributes.addClass(classes).setAttribute('id', 'home').setAttribute('aria-labelledby', 'homeHeading').addClass('hero-banner') }}>
+
+            {# Banner Description Processing - Get the raw description value and modify paragraph tags to include styling classes #}
+            {% set banner_description = content.field_banner_description['#items'].0.value %}
+            {% set modified_banner_description = banner_description|replace({'<p>': '<p class="text-light text-pgraph-banner mb-0">'}) %}
+
+            {# Main Banner Image Processing - Extract image URL with optional image style applied #}
+            {% set image_style = content.field_image.0['#image_style'] ?? null %}
+            {% set media = paragraph.field_image.entity %}
+            {% set image_url = media.field_media_image.entity.fileuri %}
+            {# Apply image style if one exists, otherwise use direct file URL #}
+            {% if image_style %}
+                {% set image_url = image_url|image_style(image_style) %}
+            {% else %}
+                {% set image_url = file_url(image_url) %}
+            {% endif %}
+            {# Get image file object for additional properties (alt text, etc.) #}
+            {% set image_file = media.field_media_image.0 ?? null %}
+
+            {# Banner CTA Icon Processing - Extract icon image URL with optional image style applied #}
+            {% set icon_image_style = content.field_banner_cta_icon.0['#image_style'] ?? null %}
+            {% set icon_media = paragraph.field_banner_cta_icon.entity %}
+            {% set icon_image_url = icon_media.field_media_image.entity.fileuri %}
+            {# Apply image style to icon if one exists, otherwise use direct file URL #}
+            {% if icon_image_style %}
+                {% set icon_image_url = icon_image_url|image_style(icon_image_style) %}
+            {% else %}
+                {% set icon_image_url = file_url(icon_image_url) %}
+            {% endif %}
+            {# Get icon image file object for additional properties #}
+            {% set icon_image_file = icon_media.field_media_image.0 ?? null %}
+            
+            {# Banner CTA Link Processing - Extract link text and prepare URL variables #}
+            {% if content.field_banner_cta['#items'] %}
+                {% set cta_link = content.field_banner_cta['#items'].0 %}
+                {% set cta_text = cta_link.title %}
+                {% set cta_uri = cta_link.uri %}
+                
+                {# Check if it's an anchor link (internal:#anchor) #}
+                {% if cta_uri starts with 'internal:#' %}
+                    {# It's an anchor link - remove 'internal:' prefix #}
+                    {% set field_banner_cta_link = cta_uri|replace({'internal:': ''}) %}
+                {% elseif cta_uri starts with '#' %}
+                    {# Already a proper anchor link #}
+                    {% set field_banner_cta_link = cta_uri %}
+                {% elseif content.field_banner_cta.0['#url'].external %}
+                    {# External link - use the raw URI #}
+                    {% set field_banner_cta_link = content.field_banner_cta.0['#url'].uri %}
+                {% else %}
+                    {# Internal link - generate proper Drupal path #}
+                    {% set field_banner_cta_link = path(content.field_banner_cta.0['#url'].routeName, content.field_banner_cta.0['#url'].routeParameters) %}
+                    
+                    {# Check if the URI contains a fragment (anchor) #}
+                    {% if cta_uri matches '/.*#.+$/' %}
+                        {# Extract the fragment and append it to the path #}
+                        {% set fragment = cta_uri|split('#')|last %}
+                        {% set field_banner_cta_link = field_banner_cta_link ~ '#' ~ fragment %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+            {# Read alignment value from the paragraph entity (raw value) #}
+            {% set imageAlignment = paragraph.field_align_image.value %}
+
+            <div class="banner-container">
+                {# If imageAlignment is "right" => render content-side first, otherwise image-side first #}
+                {% if imageAlignment == 'right' %}
+                    <!-- Right alignment: Content first -->
+                    <div class="content-side">
+                        <div class="content-wrapper">
+                            <h2 id="homeHeading" class="text-heading-banner">
+                                {{ content.field_banner_title['#items'].0.value|render|replace({'<p>': '', '</p>': ''})|raw }}
+                                <span class="outline-text">{{ content.field_highlight_word }} </span>
+                            </h2>
+                            {{ modified_banner_description|raw }}
+                        </div>
+                        <a href="{{ field_banner_cta_link }}">
+                            <button class="journey-bar text-dark bg-warning py-4 px-6 fw-bold d-flex justify-content-between align-items-center border-0">
+                                <span>{{ cta_text }}</span>
+                                <span><img src="{{ icon_image_url }}" alt="{{ icon_image_file.alt|default('') }}"></span>
+                            </button>
+                        </a>
+                    </div>
+
+                    <div class="image-side">
+                        <div class="discover-bg-text" aria-hidden="true">DISCOVER</div>
+                        <img 
+                          src="{{ image_url }}" 
+                          alt="{{ image_file.alt|default('') }}" 
+                          class="img-fluid position-relative">
+                    </div>
+
+                {% else %}
+                    <!-- Left (or default) alignment: Image first -->
+                    <div class="image-side">
+                        <div class="discover-bg-text" aria-hidden="true">DISCOVER</div>
+                        <img 
+                          src="{{ image_url }}" 
+                          alt="{{ image_file.alt|default('') }}" 
+                          class="img-fluid position-relative">
+                    </div>
+
+                    <div class="content-side">
+                        <div class="content-wrapper">
+                            <h2 id="homeHeading" class="text-heading-banner">
+                                {{ content.field_banner_title['#items'].0.value|render|replace({'<p>': '', '</p>': ''})|raw }}
+                                <span class="outline-text">{{ content.field_highlight_word }} </span>
+                            </h2>
+                            {{ modified_banner_description|raw }}
+                        </div>
+                        <a href="{{ field_banner_cta_link }}">
+                            <button class="journey-bar text-dark bg-warning py-4 px-6 fw-bold d-flex justify-content-between align-items-center border-0">
+                                <span>{{ cta_text }}</span>
+                                <span><img src="{{ icon_image_url }}" alt="{{ icon_image_file.alt|default('') }}"></span>
+                            </button>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% endblock %}
+{% endblock paragraph %}

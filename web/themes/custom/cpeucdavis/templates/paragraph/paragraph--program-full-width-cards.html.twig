@@ -1,0 +1,108 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a Program Cards paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+    <section {{ attributes.addClass(classes, 'program-cards-section').setAttribute('aria-label', 'Program Cards') }}>
+      <div class="program-cards-wrapper">
+        {% if paragraph.field_full_width_program_card and not paragraph.field_full_width_program_card.isEmpty() %}
+          {% for key, item in paragraph.field_full_width_program_card %}
+            {% if item.entity %}
+                {# Set up variables for cleaner code #}
+                {% set card_entity = item.entity %}
+                {% set heading = card_entity.field_heading.value %}
+                {% set highlight_word = card_entity.field_highlight_word.value %}
+                {% set description = card_entity.field_description.value %}
+                {% set media = card_entity.field_image.entity %}
+                
+                {% set cta_title = card_entity.field_cta_link.title %}
+                {% set cta_uri = card_entity.field_cta_link.uri %}
+                {# {{dump(url(card_entity.field_cta_link.uri))}} #}
+
+                {% if cta_uri starts with 'internal:#' %}
+                    {# It's an anchor link - remove 'internal:' prefix #}
+                    {% set field_banner_cta_link = cta_uri|replace({'internal:': ''}) %}
+                {% elseif cta_uri starts with '#' %}
+                    {# Already a proper anchor link #}
+                    {% set field_banner_cta_link = cta_uri %}
+                {% elseif card_entity.field_cta_link[key].external %}
+                    {% set field_banner_cta_link = cta_uri %}
+                {% else %}
+                    {% set field_banner_cta_link = path(card_entity.field_cta_link.0.url.routeName, card_entity.field_cta_link.0.url.routeParameters) %}
+                    {% if cta_uri matches '/.*#.+$/' %}
+                        {# Extract the fragment and append it to the path #}
+                        {% set fragment = cta_uri|split('#')|last %}
+                        {% set field_banner_cta_link = field_banner_cta_link ~ '#' ~ fragment %}
+                    {% endif %}
+                {% endif %}
+
+                {# {{dump(field_banner_cta_link)}} #}
+
+
+              
+
+
+        
+
+
+
+              <div class="program-card">
+                {# Image section #}
+                {% if media and media.field_media_image and not media.field_media_image.isEmpty() %}
+                  {% set image_style = card_entity.field_image.0['#image_style'] ?? null %}
+                  {% set image_uri = media.field_media_image.entity.fileuri %}
+                  {% set image_url = image_style ? image_uri|image_style(image_style) : file_url(image_uri) %}
+                  {% set image_alt = media.field_media_image.alt|default('') %}
+                  
+                  <div class="program-card-image">
+                    <img src="{{ image_url }}" alt="{{ image_alt }}">
+                  </div>
+                {% endif %}
+
+                {# Content section #}
+                <div class="program-card-content">
+                  {% if heading or highlight_word %}
+                    <h2 class="program-card-title">
+                      {% if heading %}
+                        <span class="title-solid">{{ heading }}</span>
+                      {% endif %}
+                      {% if highlight_word %}
+                        <span class="title-outline-program-card">{{ highlight_word }}</span>
+                      {% endif %}
+                    </h2>
+                  {% endif %}
+                  
+                  {% if description %}
+                    <div class="program-card-description">
+                      {{ description|render|raw }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                {# CTA section #}
+                {% if cta_uri %}
+                  <div class="our-program-cta-section">
+                    <div class="our-program-cta-spacer"></div>
+                    <a href="{{ field_banner_cta_link }}" class="our-program-cta-btn">{{ cta_title }}</a>
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </section>
+  {% endblock %}
+{% endblock paragraph %}

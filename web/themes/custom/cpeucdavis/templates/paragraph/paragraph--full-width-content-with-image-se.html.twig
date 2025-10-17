@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+    {% block content %}
+
+        {% set image_style = content.field_image.0['#image_style'] ?? null %}
+        {% set media = paragraph.field_image.entity %}
+        {% set image_url = media.field_media_image.entity.fileuri %}
+        {# Apply image style if one exists, otherwise use direct file URL #}
+        {% if image_style %}
+            {% set image_url = image_url|image_style(image_style) %}
+        {% else %}
+            {% set image_url = file_url(image_url) %}
+        {% endif %}
+        {# Get image file object for additional properties (alt text, etc.) #}
+        {% set image_file = media.field_media_image.0 ?? null %}
+
+        {% set banner_description = content.field_description['#items'].0.value %}
+        {% set modified_banner_description = banner_description|replace({'<p>': '<p class="subheading">'}) %}
+
+        {# <section class="programs-intro-section" aria-labelledby="programs-heading"> #}
+        <div class="program-intro-wrap">
+          <div class="container">
+            <h2 id="programs-heading" class="main-heading">
+              {{content.field_heading}}
+            </h2>
+            {{modified_banner_description|raw}}
+          </div>
+          <div class="arrow-bottom">
+            <img 
+            src="{{ image_url }}" 
+            alt="{{ image_file.alt|default('') }}">
+          </div>
+        </div>
+        {# </section> #}
+    {% endblock %}
+{% endblock paragraph %}

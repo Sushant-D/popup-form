@@ -1,0 +1,141 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+    {% block content %}
+
+        {% set ctaTextContentAlignment = paragraph.field_title_alignment.value %}
+
+        {% set image_style = content.field_image.0['#image_style'] ?? null %}
+        {% set media = paragraph.field_image.entity %}
+        {% set image_url = media.field_media_image.entity.fileuri %}
+        {# Apply image style if one exists, otherwise use direct file URL #}
+        {% if image_style %}
+            {% set image_url = image_url|image_style(image_style) %}
+        {% else %}
+            {% set image_url = file_url(image_url) %}
+        {% endif %}
+        {# Get image file object for additional properties (alt text, etc.) #}
+        {% set image_file = media.field_media_image.0 ?? null %}
+
+        <section {{ attributes.addClass(classes).addClass('cta-section') }}>
+            {% if ctaTextContentAlignment == 'left' %}
+                {# Left alignment: text, image, buttons #}
+                <div class="cta-text-column">
+                    <div class="cta-text-content">
+                        {{content.field_cta_text_content|raw}}
+                    </div>
+                </div>
+            
+                <div class="cta-image-column">
+                <img 
+                src="{{ image_url }}" 
+                alt="{{ image_file.alt|default('') }}">
+                <div class="cta-image-overlay">
+                    <div class="overlay-text">{{content.field_overlay_text}}</div>
+                </div>
+                </div>
+            
+                <div class="cta-buttons-column">
+                    <h2 class="cta-heading">
+                        {{ content.field_description['#items'].0.value|render|replace({'<p>': '', '</p>': ''})|raw }}
+                    </h2>
+                    {% if content.field_banner_cta['#items'] %}
+                        {% for key, item in content.field_banner_cta['#items'] %}
+                            {% set cta_text = item.title %}
+                            {% set cta_uri = item.uri %}
+                            
+                            {# Check if it's an anchor link (internal:#anchor) #}
+                            {% if cta_uri starts with 'internal:#' %}
+                                {# It's an anchor link - remove 'internal:' prefix #}
+                                {% set field_banner_cta_link = cta_uri|replace({'internal:': ''}) %}
+                            {% elseif cta_uri starts with '#' %}
+                                {# Already a proper anchor link #}
+                                {% set field_banner_cta_link = cta_uri %}
+                            {% elseif content.field_banner_cta[key]['#url'].external %}
+                                {# External link - use the raw URI #}
+                                {% set field_banner_cta_link = content.field_banner_cta[key]['#url'].uri %}
+                            {% else %}
+                                {# Internal link - generate proper Drupal path #}
+                                {% set field_banner_cta_link = path(content.field_banner_cta[key]['#url'].routeName, content.field_banner_cta[key]['#url'].routeParameters) %}
+                                
+                                {# Check if the URI contains a fragment (anchor) #}
+                                {% if cta_uri matches '/.*#.+$/' %}
+                                    {# Extract the fragment and append it to the path #}
+                                    {% set fragment = cta_uri|split('#')|last %}
+                                    {% set field_banner_cta_link = field_banner_cta_link ~ '#' ~ fragment %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            <a href="{{ field_banner_cta_link }}"  class="cta-button" aria-label="{{ cta_text }}">{{ cta_text }}</a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% else %}
+                {# Right alignment: buttons, image, text #}
+                <div class="cta-buttons-column">
+                    <h2 class="cta-heading">
+                        {{ content.field_description['#items'].0.value|render|replace({'<p>': '', '</p>': ''})|raw }}
+                    </h2>
+                    {% if content.field_banner_cta['#items'] %}
+                        {% for key, item in content.field_banner_cta['#items'] %}
+                            {% set cta_text = item.title %}
+                            {% set cta_uri = item.uri %}
+                            
+                            {# Check if it's an anchor link (internal:#anchor) #}
+                            {% if cta_uri starts with 'internal:#' %}
+                                {# It's an anchor link - remove 'internal:' prefix #}
+                                {% set field_banner_cta_link = cta_uri|replace({'internal:': ''}) %}
+                            {% elseif cta_uri starts with '#' %}
+                                {# Already a proper anchor link #}
+                                {% set field_banner_cta_link = cta_uri %}
+                            {% elseif content.field_banner_cta[key]['#url'].external %}
+                                {# External link - use the raw URI #}
+                                {% set field_banner_cta_link = content.field_banner_cta[key]['#url'].uri %}
+                            {% else %}
+                                {# Internal link - generate proper Drupal path #}
+                                {% set field_banner_cta_link = path(content.field_banner_cta[key]['#url'].routeName, content.field_banner_cta[key]['#url'].routeParameters) %}
+                                
+                                {# Check if the URI contains a fragment (anchor) #}
+                                {% if cta_uri matches '/.*#.+$/' %}
+                                    {# Extract the fragment and append it to the path #}
+                                    {% set fragment = cta_uri|split('#')|last %}
+                                    {% set field_banner_cta_link = field_banner_cta_link ~ '#' ~ fragment %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            <a href="{{ field_banner_cta_link }}"  class="cta-button" aria-label="{{ cta_text }}">{{ cta_text }}</a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            
+                <div class="cta-image-column">
+                <img 
+                src="{{ image_url }}" 
+                alt="{{ image_file.alt|default('') }}">
+                <div class="cta-image-overlay">
+                    <div class="overlay-text">{{content.field_overlay_text}}</div>
+                </div>
+                </div>
+            
+                <div class="cta-text-column">
+                    <div class="cta-text-content">
+                        {{content.field_cta_text_content|raw}}
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+    {% endblock %}
+{% endblock paragraph %}

@@ -1,0 +1,57 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+    {# CONTENT Description Processing - Get the raw description value and modify paragraph tags to include styling classes #}
+    {% set banner_description = content.field_banner_description['#items'].0.value %}
+    {% set modified_banner_description = banner_description|replace({'<p>': '<p class="description">'}) %}
+    
+    {# Read alignment value from the paragraph entity (raw value) #}
+    {% set titleAlignment = paragraph.field_title_alignment.value %}
+    
+    <section {{ attributes.addClass(classes).addClass('split-section') }}>
+      
+      {% if titleAlignment == 'right' %}
+        {# Right-aligned title: description first, title second #}
+        <div class="left-panel">
+          {{ modified_banner_description|raw }}
+        </div>
+
+        <div class="right-panel">
+          <h2 class="highlight-yellow">
+            {{ content.field_banner_title['#items'].0.value|render|replace({'<p>': '', '</p>': ''})|raw }}
+            <span class="highlight-outline">{{ paragraph.field_highlight_word.value }}</span>
+          </h2>
+        </div>
+
+      {% else %}
+        {# Default or left alignment: title first, description second #}
+        <div class="left-panel">
+          <h2 class="highlight-yellow">
+            {{ content.field_banner_title['#items'].0.value|render|replace({'<p>': '', '</p>': ''})|raw }}
+            <span class="highlight-outline">{{ paragraph.field_highlight_word.value }}</span>
+          </h2>
+        </div>
+
+        <div class="right-panel">
+          {{ modified_banner_description|raw }}
+        </div>
+      {% endif %}
+      
+    </section>
+
+  {% endblock %}
+{% endblock paragraph %}
