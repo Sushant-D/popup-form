@@ -612,7 +612,6 @@ a.btn:focus-visible {
 /* owl carousel */
 .owl-carousel .owl-stage {
     padding-left: 0 !important;
-    padding-right: 200px;
     display: flex;
 }
 
@@ -620,9 +619,9 @@ a.btn:focus-visible {
     height: 100%;
 }
 
-.owl-carousel {
+/* .owl-carousel {
     padding-left: calc(1.5rem * .5);
-}
+} */
 
 /* header */
 .accordion-item a {

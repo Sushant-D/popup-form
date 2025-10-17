@@ -1,0 +1,136 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+    {% block content %}
+        <section {{ attributes.addClass(classes).setAttribute('aria-label', 'Student Testimonials').addClass('testimonial-section') }}>
+
+            <h2 class="sr-only">Student Success Stories</h2>
+
+            {% if paragraph.field_success_stories %}
+            <div id="testimonial-carousel" class="owl-carousel owl-theme testimonial-carousel" role="region"
+                aria-label="Testimonials carousel" aria-live="polite">
+                {% for item in paragraph.field_success_stories %}
+                    {% set image_style = item.entity.field_testimonial_media.0['#image_style'] ?? null %}
+                    {% set media = item.entity.field_testimonial_media.entity %}
+                    {% set image_url = media.field_media_image.entity.fileuri %}
+                    {# Apply image style if one exists, otherwise use direct file URL #}
+                    {% if image_style %}
+                        {% set image_url = image_url|image_style(image_style) %}
+                    {% else %}
+                        {% set image_url = file_url(image_url) %}
+                    {% endif %}
+                    {# Get image file object for additional properties (alt text, etc.) #}
+                    {% set image_file = media.field_media_image.0 ?? null %}
+
+
+                    {% set card_entity = item.entity %}
+                
+                {% set cta_title = card_entity.field_cta_link.title %}
+                {% set cta_uri = card_entity.field_cta_link.uri %}
+                {# {{dump(url(card_entity.field_cta_link.uri))}} #}
+
+                {% if cta_uri starts with 'internal:#' %}
+                    {# It's an anchor link - remove 'internal:' prefix #}
+                    {% set field_banner_cta_link = cta_uri|replace({'internal:': ''}) %}
+                {% elseif cta_uri starts with '#' %}
+                    {# Already a proper anchor link #}
+                    {% set field_banner_cta_link = cta_uri %}
+                {% elseif card_entity.field_cta_link[key].external %}
+                    {% set field_banner_cta_link = cta_uri %}
+                {% else %}
+                    {% set field_banner_cta_link = path(card_entity.field_cta_link.0.url.routeName, card_entity.field_cta_link.0.url.routeParameters) %}
+                    {% if cta_uri matches '/.*#.+$/' %}
+                        {# Extract the fragment and append it to the path #}
+                        {% set fragment = cta_uri|split('#')|last %}
+                        {% set field_banner_cta_link = field_banner_cta_link ~ '#' ~ fragment %}
+                    {% endif %}
+                {% endif %}
+                
+
+
+                <!-- Testimonial 1 - Lacey Felder -->
+                <article class="testimonial-card">
+                    <div class="testimonial-left">
+                        <div class="testimonial-content">
+                        <blockquote class="testimonial-quote">
+                            {{ item.entity.field_quote_text.value|render|replace({'<p>':'<p class="quote-text">'})|raw }}
+
+                            {# <p class="quote-text">
+                            "It’s not just about gaining new skills, it’s about leaving with the confidence to grow into who you’re meant to
+                            become."
+                            </p> #}
+                            <footer class="quote-author">
+                            {{  item.entity.field_quote_author.value }}
+                            </footer>
+                        </blockquote>
+                        </div>
+                        {# {% set link = item.entity.field_cta_link %}
+                        {% set link = link|merge({'#attributes': {'class': ['ffit-content']}}) %}
+                        {{ link }} #}
+                        <a href="{{ field_banner_cta_link }}" class="read-story-btn" aria-label="Read Lacey Felder's full story">{{ cta_title }}</a>
+                    </div>
+
+                    <div class="testimonial-media" data-text="SUCCESS" role="img"
+                        aria-label="Lacey Felder, smiling and wearing glasses">
+                        <img src="{{ image_url }}" alt="{{ image_file.alt|default('') }}">
+                        <div class="media-overlay" aria-hidden="true"></div>
+                    </div>
+                </article>
+
+                <!-- Testimonial 2 - Melissa H. (with video) -->
+                {# <article class="testimonial-card">
+                    <div class="testimonial-left">
+                        <div class="testimonial-content">
+                        <blockquote class="testimonial-quote">
+                            <p class="quote-text">
+                            "Changing careers in your late 30s isn’t easy. UC Davis CPE gave me the confidence I was craving."
+                            </p>
+                            <footer class="quote-author">
+                            —Melissa H., Accounting Principles Certificate Program Graduate
+                            </footer>
+                        </blockquote>
+                        </div>
+                        <a href="#" class="read-story-btn" aria-label="Read Melissa H.'s full story">READ MELISSA'S STORY</a>
+                    </div>
+
+                    <div class="testimonial-media" data-text="ACHIEVE">
+                        <video class="testimonial-video"
+                        poster="./images/Frame 16.png"
+                        aria-label="Video testimonial from Melissa H.">
+                        <source src="./images/UCDavis-CPE-Final-Video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                        </video>
+                        <button class="testimonial-play-button" aria-label="Play video testimonial from Melissa H.">
+                        <svg class="testimonial-play-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="5,3 19,12 5,21" />
+                        </svg>
+                        <svg class="testimonial-pause-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="4" width="4" height="16" />
+                            <rect x="14" y="4" width="4" height="16" />
+                        </svg>
+                        <span class="sr-only">Play video</span>
+                        </button>
+                        <div class="media-overlay" aria-hidden="true"></div>
+                    </div>
+                </article> #}
+            {% endfor %}
+            </div>
+
+            <div class="carousel-status" role="status" aria-live="polite" aria-atomic="true"></div>
+            {% endif %}
+        </section>
+    {% endblock %}
+{% endblock paragraph %}
