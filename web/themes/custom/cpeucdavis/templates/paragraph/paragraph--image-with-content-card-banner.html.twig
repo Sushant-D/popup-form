@@ -93,8 +93,8 @@
                             </h2>
                             {{ modified_banner_description|raw }}
                         </div>
-                        <a href="{{ field_banner_cta_link }}">
-                            <button class="journey-bar text-dark bg-warning py-4 px-6 fw-bold d-flex justify-content-between align-items-center border-0">
+                        <a href="{{ field_banner_cta_link }}" aria-label="Go to link for {{ cta_text }}">
+                            <button class="journey-bar">
                                 <span>{{ cta_text }}</span>
                                 <span><img src="{{ icon_image_url }}" alt="{{ icon_image_file.alt|default('') }}"></span>
                             </button>
@@ -127,8 +127,8 @@
                             </h2>
                             {{ modified_banner_description|raw }}
                         </div>
-                        <a href="{{ field_banner_cta_link }}">
-                            <button class="journey-bar text-dark bg-warning py-4 px-6 fw-bold d-flex justify-content-between align-items-center border-0">
+                        <a href="{{ field_banner_cta_link }}" aria-label="Go to link for {{ cta_text }}">
+                            <button class="journey-bar">
                                 <span>{{ cta_text }}</span>
                                 <span><img src="{{ icon_image_url }}" alt="{{ icon_image_file.alt|default('') }}"></span>
                             </button>

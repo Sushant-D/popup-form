@@ -11,7 +11,7 @@
 <header>
   {{ page.top_header }}
   
-  <nav class="navbar" aria-label="Main site navigation">
+  <nav class="ucd-navbar" aria-label="Main site navigation">
     <div class="container-fluid">
       {% if page.site_branding %}
         {{ page.site_branding }}
@@ -25,11 +25,11 @@
       {% if page.primary_menu %}
         {{ page.primary_menu }}
       {% else %}
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Our Programs'|t }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Organizational Training'|t }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Campus Partnerships'|t }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Why Choose Us'|t }}</a></li>
+        <ul class="ucd-navbar-nav">
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Our Programs' }}">{{ 'Our Programs'|t }}</a></li>
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Organizational Training' }}">{{ 'Organizational Training'|t }}</a></li>
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Campus Partnerships' }}">{{ 'Campus Partnerships'|t }}</a></li>
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Why Choose Us' }}">{{ 'Why Choose Us'|t }}</a></li>
         </ul>
       {% endif %}
 
@@ -37,14 +37,14 @@
       {% if page.header_form %}
         {{ page.header_form }}
       {% else %}
-        <a href="#" class="yellowBtn desktop-only" aria-label="Start a Conversation" role="button">
+        <a href="#" class="ucd-btn yellowBtn desktop-only" aria-label="Start a Conversation" role="button">
           {{ 'Start a Conversation'|t }}
         </a>
       {% endif %}
 
       {# Mobile Menu Toggle Button #}
-      <button class="navbar-toggler" id="navToggler" aria-label="Toggle navigation" aria-expanded="false">
-        <div class="navbar-toggler-icon">
+      <button class="ucd-navbar-toggler" id="navToggler" aria-label="Toggle navigation" aria-expanded="false">
+        <div class="ucd-navbar-toggler-icon">
           <span></span>
           <span></span>
           <span></span>
@@ -54,8 +54,8 @@
   </nav>
 
   {# Mobile Menu #}
-  <div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-header">
+  <div class="ucd-mobile-menu" id="mobileMenu">
+    <div class="ucd-mobile-menu-header">
       {% if page.site_branding %}
         {{ page.site_branding }}
       {% else %}
@@ -63,18 +63,18 @@
           <img src="{{ base_path ~ directory }}/images/UC Davis Logo.png" alt="UC Davis Logo">
         </a>
       {% endif %}
-      <button class="btn-close" id="closeMenu" aria-label="Close">&times;</button>
+      <button class="ucd-btn-close" id="closeMenu" aria-label="Close">&times;</button>
     </div>
-    <div class="mobile-menu-body">
+    <div class="ucd-mobile-menu-body">
       {# Mobile Navigation Menu #}
       {% if page.primary_menu %}
         {{ page.primary_menu }}
       {% else %}
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Our Programs'|t }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Organizational Training'|t }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Campus Partnerships'|t }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="">{{ 'Why Choose Us'|t }}</a></li>
+        <ul class="ucd-navbar-nav">
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Our Programs' }}">{{ 'Our Programs'|t }}</a></li>
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Organizational Training' }}">{{ 'Organizational Training'|t }}</a></li>
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Campus Partnerships' }}">{{ 'Campus Partnerships'|t }}</a></li>
+          <li class="ucd-nav-item"><a class="ucd-nav-link" href="" aria-label="Visit Page {{ 'Why Choose Us' }}">{{ 'Why Choose Us'|t }}</a></li>
         </ul>
       {% endif %}
       
@@ -82,7 +82,7 @@
       {% if page.header_form %}
         {{ page.header_form }}
       {% else %}
-        <a href="#" class="yellowBtn" aria-label="Start a Conversation" role="button">
+        <a href="#" class="ucd-btn yellowBtn" aria-label="Start a Conversation" role="button">
           {{ 'Start a Conversation'|t }}
         </a>
       {% endif %}

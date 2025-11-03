@@ -16,7 +16,7 @@
 {% block paragraph %}
   {% block content %}
     <section {{ attributes.addClass(classes).setAttribute('aria-label', 'Program statistics').addClass('stats-section') }}>
-      <div class="container">
+      <div class="stats-section-wrapper">
         <div class="stats-grid">
           {% for item in content.field_statistics_section['#items'] %}
             {% set stat_paragraph = item.entity %}

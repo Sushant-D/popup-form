@@ -88,7 +88,7 @@
           });
 
           // Close mobile menu when clicking on a nav link
-          const mobileNavLinks = element.querySelectorAll('.mobile-menu .nav-link');
+          const mobileNavLinks = element.querySelectorAll('.ucd-mobile-menu .ucd-nav-link');
           mobileNavLinks.forEach(function(link) {
             link.addEventListener('click', function() {
               mobileMenu.classList.remove('active');
@@ -107,7 +107,7 @@
    */
   Drupal.behaviors.stickyNavbar = {
     attach: function (context, settings) {
-      const elements = once('stickyNavbar', '.navbar', context);
+      const elements = once('stickyNavbar', '.ucd-navbar', context);
       
       elements.forEach(function(navbar) {
         function handleScroll() {

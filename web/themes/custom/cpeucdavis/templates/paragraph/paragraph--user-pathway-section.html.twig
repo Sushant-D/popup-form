@@ -20,7 +20,7 @@
         
         <section {{ attributes.addClass(classes).setAttribute('aria-label', 'User type selection').addClass('user-type-section') }}>
         {# <section class="user-type-section" aria-label="User type selection"> #}
-            <div class="container">
+            <div class="user-section-wrapper">
                 <div class="user-type-content">
                     {{ content.field_banner_title['#items'].0.value|render|replace({'<p>': '<p class="user-type-label">'})|raw }}
                     {% if content.field_banner_cta['#items'] %}
@@ -54,9 +54,9 @@
                         {% endfor %}
                     {% endif %}
 
-                    {# <a href="#" class="user-type-link">Working Professional</a>
-                    <a href="#" class="user-type-link">UC Davis Employee</a>
-                    <a href="#" class="user-type-link">Leader Looking for Group Training</a> #}
+                    {# <a href="#" class="user-type-link" aria-label="Visit Link Working Professional">Working Professional</a>
+                    <a href="#" class="user-type-link" aria-label="Visit Link UC Davis Employee">UC Davis Employee</a>
+                    <a href="#" class="user-type-link" aria-label="Visit Link Leader Looking for Group Training">Leader Looking for Group Training</a> #}
                 </div>
             </div>
         </section>

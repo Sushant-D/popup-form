@@ -14,12 +14,12 @@
 #}
 
 {% if items %}
-  <ul class="navbar-nav d-flex" id="main-navigation" role="menubar">
+  <ul class="ucd-navbar-nav d-flex" id="main-navigation" role="menubar">
     {% for item in items %}
       {# set active class if item is in active trail #}
       {% set active = item.in_active_trail ? 'active' : '' %}
-      <li class="nav-item {{ active }}" role="none">
-        <a class="nav-link {{ active }}" href="{{ item.url }}" role="menuitem" title="{{ item.title }}">
+      <li class="ucd-nav-item {{ active }}" role="none">
+        <a class="ucd-nav-link {{ active }}" href="{{ item.url }}" role="menuitem" title="{{ item.title }}">
           {{ item.title }}
         </a>
       </li>

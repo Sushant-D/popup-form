@@ -80,7 +80,7 @@
                         {# {% set link = item.entity.field_cta_link %}
                         {% set link = link|merge({'#attributes': {'class': ['ffit-content']}}) %}
                         {{ link }} #}
-                        <a href="{{ field_banner_cta_link }}" class="read-story-btn" aria-label="Read Lacey Felder's full story">{{ cta_title }}</a>
+                        <a href="{{ field_banner_cta_link }}" class="read-story-btn" aria-label="Read {{ cta_title }}'s full story">{{ cta_title }}</a>
                     </div>
 
                     <div class="testimonial-media" data-text="SUCCESS" role="img"
@@ -103,7 +103,7 @@
                             </footer>
                         </blockquote>
                         </div>
-                        <a href="#" class="read-story-btn" aria-label="Read Melissa H.'s full story">READ MELISSA'S STORY</a>
+                        <a href="#" class="read-story-btn" aria-label="Read {{ cta_title }}'s full story">READ MELISSA'S STORY</a>
                     </div>
 
                     <div class="testimonial-media" data-text="ACHIEVE">
@@ -113,7 +113,7 @@
                         <source src="./images/UCDavis-CPE-Final-Video.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                         </video>
-                        <button class="testimonial-play-button" aria-label="Play video testimonial from Melissa H.">
+                        <button class="testimonial-play-button" aria-label="Play video testimonial from {{ cta_title }}">
                         <svg class="testimonial-play-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <polygon points="5,3 19,12 5,21" />
                         </svg>
