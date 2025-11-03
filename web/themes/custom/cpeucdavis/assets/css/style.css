@@ -1487,44 +1487,90 @@ font-size: clamp(20px, 2vw, 30px);
    color: var(--light);
    line-height: 1.5;
  }
+.cta-image-column {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--light);
+}
 
- .cta-image-column {
-   position: relative;
-   overflow: hidden;
-    border-right: 1px solid var(--light);
- }
+.cta-image-column img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: blur(5px);
+}
 
- .cta-image-column img {
-   width: 100%;
-   height: 100%;
-   object-fit: cover;
-   display: block;
- }
+.cta-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  font-size: 90px;
+}
 
- .cta-image-overlay {
-   position: absolute;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   padding: 40px;
- }
+.cta-image-overlay-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  font-size: 90px;
+}
 
- .overlay-text {
-font-size: clamp(48px, 5vw, 50px);
-   font-weight: 900;
-   color: transparent;
-   -webkit-text-stroke: 2px var(--aggiegold);
-   text-transform: uppercase;
-   line-height: 1;
-   text-align: center;
-   letter-spacing: 0.05em;
- }
+.image-side .cta-image-overlay-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  font-size: 135px;
+}
 
- .cta-buttons-column {
+.overlay-text {
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--aggiegold);
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.overlay-text-solid {
+  font-weight: 900;
+  color: var(--aggiegold);
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.overlay-image-png-format {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.overlay-image-png-format img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  filter: blur(0px);
+}
+  .cta-buttons-column {
    background: var(--aggieblue);
    display: flex;
    flex-direction: column;
@@ -3159,4 +3205,49 @@ grid-template-columns: 0.8fr 1.2fr;
  .main-heading {
    margin-bottom: 25px;
  }
+}
+#testimonial-carousel {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  /* modern: overflow: clip; */
+  position: relative;
+  contain: inline-size layout;
+  /* prevents children from affecting page width */
+}
+
+#testimonial-carousel .owl-stage-outer {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  /* hard stop for the very wide .owl-stage */
+}
+
+#testimonial-carousel .owl-stage {
+  /* keep transform for sliding, just clip any overflow */
+  max-width: 100% !important;
+}
+
+#testimonial-carousel .owl-item,
+#testimonial-carousel .testimonial-card,
+#testimonial-carousel .testimonial-media {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+#testimonial-carousel img,
+#testimonial-carousel video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* If your data-text pseudo-element is big, keep it inside */
+#testimonial-carousel .testimonial-media {
+  position: relative;
+}
+
+#testimonial-carousel .testimonial-media::before {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
