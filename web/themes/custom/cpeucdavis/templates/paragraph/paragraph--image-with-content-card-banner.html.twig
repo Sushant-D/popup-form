@@ -19,6 +19,8 @@
 
         <section {{ attributes.addClass(classes).setAttribute('id', 'home').setAttribute('aria-labelledby', 'homeHeading').addClass('hero-banner') }}>
 
+            {% set highlight_word_count = paragraph.field_highlight_word_count.value|default(0) %}
+
             {# Banner Description Processing - Get the raw description value and modify paragraph tags to include styling classes #}
             {% set banner_description = content.field_banner_description['#items'].0.value %}
             {% set modified_banner_description = banner_description|replace({'<p>': '<p class="text-light text-pgraph-banner mb-0">'}) %}
@@ -35,6 +37,23 @@
             {% endif %}
             {# Get image file object for additional properties (alt text, etc.) #}
             {% set image_file = media.field_media_image.0 ?? null %}
+
+
+
+            {# Main Bannerackground Image Processing - Extract image URL with optional image style applied #}
+            {% set background_image_style = content.field_background_image.0['#image_style'] ?? null %}
+            {% set background_media = paragraph.field_background_image.entity %}
+            {% set background_image_url = background_media.field_media_image.entity.fileuri %}
+            {# Apply image style if one exists, otherwise use direct file URL #}
+            {% if background_image_style %}
+                {% set background_image_url = background_image_url|image_style(background_image_style) %}
+            {% else %}
+                {% set background_image_url = file_url(background_image_url) %}
+            {% endif %}
+            {# Get image file object for additional properties (alt text, etc.) #}
+            {% set background_image_file = background_media.field_media_image.0 ?? null %}
+
+
 
             {# Banner CTA Icon Processing - Extract icon image URL with optional image style applied #}
             {% set icon_image_style = content.field_banner_cta_icon.0['#image_style'] ?? null %}
@@ -101,22 +120,44 @@
                         </a>
                     </div>
 
-                    <div class="image-side">
-                        <div class="discover-bg-text" aria-hidden="true">DISCOVER</div>
+                    <div class="image-side home-banner">
+                            <img src="{{ background_image_url }}" alt="{{ background_image_file.alt|default('') }}">
+                        <div class="cta-image-overlay-banner">
+                            {% for i in 1..highlight_word_count %}
+                                {% if i == 1 %}
+                                <div class="overlay-text-solid">Discover</div>
+                                {% else %}
+                                <div class="overlay-text">Discover</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="overlay-image-png-format">
                         <img 
                           src="{{ image_url }}" 
                           alt="{{ image_file.alt|default('') }}" 
                           class="img-fluid position-relative">
+                        </div>
                     </div>
 
                 {% else %}
                     <!-- Left (or default) alignment: Image first -->
-                    <div class="image-side">
-                        <div class="discover-bg-text" aria-hidden="true">DISCOVER</div>
-                        <img 
-                          src="{{ image_url }}" 
-                          alt="{{ image_file.alt|default('') }}" 
-                          class="img-fluid position-relative">
+                    <div class="image-side home-banner">
+                            <img src="{{ background_image_url }}" alt="{{ background_image_file.alt|default('') }}">
+                        <div class="cta-image-overlay-banner">
+                            {% for i in 1..highlight_word_count %}
+                                {% if i == 1 %}
+                                <div class="overlay-text-solid">Discover</div>
+                                {% else %}
+                                <div class="overlay-text">Discover</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="overlay-image-png-format">
+                            <img 
+                            src="{{ image_url }}" 
+                            alt="{{ image_file.alt|default('') }}" 
+                            class="img-fluid position-relative">
+                        </div>
                     </div>
 
                     <div class="content-side">
