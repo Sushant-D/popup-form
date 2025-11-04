@@ -40,7 +40,7 @@
         /**
          * Initialize stats counter with Intersection Observer.
          */
-        const elements = once('statsCounter', '.stat-number', context);
+        const elements = once('statsCounter', '.stat-number .stat-value', context);
         
         elements.forEach(function(element) {
           const $element = $(element);

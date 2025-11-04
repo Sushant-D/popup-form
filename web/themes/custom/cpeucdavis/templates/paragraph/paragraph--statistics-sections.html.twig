@@ -21,9 +21,12 @@
           {% for item in content.field_statistics_section['#items'] %}
             {% set stat_paragraph = item.entity %}
             {% if stat_paragraph %}
+              {% set formatted_number = (stat_paragraph.field_stat_number.value + 0) %}
               <div class="stat-item">
-                <div class="stat-number" aria-label="{{ stat_paragraph.field_stat_number.value }} {{ stat_paragraph.field_stat_suffix.value }}">
-                  {{ stat_paragraph.field_stat_number.value }}{{ stat_paragraph.field_stat_suffix.value }}
+                <div class="stat-number" aria-label="{{ formatted_number }} {{ stat_paragraph.field_stat_suffix.value }}">
+                  <span class="stat-prefix">{{ stat_paragraph.field_stat_prefix.value }}</span>
+                  <span class="stat-value">{{ formatted_number }}</span>
+                  <span class="stat-suffix">{{ stat_paragraph.field_stat_suffix.value }}</span>
                 </div>
                 {{ stat_paragraph.field_stat_label.value|render|replace({'<p>': '<p class="stat-label">'})|raw }}
               </div>
