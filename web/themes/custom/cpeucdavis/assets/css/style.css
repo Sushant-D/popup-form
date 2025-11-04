@@ -685,7 +685,9 @@ a.btn:focus-visible {
    position: relative;
    z-index: 2;
  }
-
+.image-side.home-banner img{
+  z-index: 0;
+}
  .content-side {
    display: flex;
    flex-direction: column;
