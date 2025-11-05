@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the popup_form module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function popup_form_install() {
+  // Set default configuration
+  $config = \Drupal::configFactory()->getEditable('popup_form.settings');
+  $config->set('enable_jquery', TRUE)
+    ->set('debug_mode', FALSE)
+    ->set('load_on_all_pages', TRUE)
+    ->set('include_default_css', TRUE)
+    ->set('default_theme', 'default')
+    ->save();
+
+  // Show installation message
+  \Drupal::messenger()->addStatus(t('Popup Form module has been installed successfully. Configure your popup forms at <a href="@url">Administration » Configuration » User Interface » Popup Form</a>.', [
+    '@url' => \Drupal\Core\Url::fromRoute('popup_form.admin.settings')->toString(),
+  ]));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function popup_form_uninstall() {
+  // Clean up configuration
+  $config_factory = \Drupal::configFactory();
+  $config_factory->getEditable('popup_form.settings')->delete();
+  
+  // Delete all popup form entities
+  $storage = \Drupal::entityTypeManager()->getStorage('popup_form');
+  $entities = $storage->loadMultiple();
+  $storage->delete($entities);
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function popup_form_requirements($phase) {
+  $requirements = [];
+  
+  if ($phase == 'runtime') {
+    // Check if Webform module is available
+    $module_handler = \Drupal::moduleHandler();
+    if (!$module_handler->moduleExists('webform')) {
+      $requirements['popup_form_webform'] = [
+        'title' => t('Popup Form - Webform Integration'),
+        'value' => t('Webform module not found'),
+        'description' => t('The Webform module is recommended for full functionality. <a href="@url">Download Webform module</a>', [
+          '@url' => 'https://www.drupal.org/project/webform',
+        ]),
+        'severity' => REQUIREMENT_WARNING,
+      ];
+    }
+    
+    // Check jQuery UI availability
+    $library_discovery = \Drupal::service('library.discovery');
+    $jquery_ui = $library_discovery->getLibraryByName('core', 'jquery.ui.sortable');
+    if (empty($jquery_ui)) {
+      $requirements['popup_form_jquery_ui'] = [
+        'title' => t('Popup Form - jQuery UI'),
+        'value' => t('jQuery UI not available'),
+        'description' => t('jQuery UI is required for drag and drop functionality in the admin interface.'),
+        'severity' => REQUIREMENT_WARNING,
+      ];
+    }
+  }
+  
+  return $requirements;
+}

@@ -1,0 +1,9 @@
+popup_form.admin.settings:
+  route_name: popup_form.admin.settings
+  title: 'Settings'
+  base_route: popup_form.admin.settings
+
+popup_form.admin.collection:
+  route_name: popup_form.admin.collection
+  title: 'Manage'
+  base_route: popup_form.admin.settings

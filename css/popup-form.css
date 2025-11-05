@@ -1,0 +1,315 @@
+.popup-form-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .popup-form-wrapper.popup-active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .popup-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+  
+  .popup-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    outline: none;
+  }
+  
+  .popup-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+  
+  .popup-close:hover {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .popup-content {
+    padding: 30px;
+  }
+  
+  .popup-title {
+    margin: 0 0 15px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .popup-description {
+    margin: 0 0 20px 0;
+    color: #666;
+    line-height: 1.5;
+  }
+  
+  .popup-form-content {
+    margin-top: 20px;
+  }
+  
+  /* Animations */
+  .popup-fade-in {
+    animation: popupFadeIn 0.3s ease forwards;
+  }
+  
+  .popup-slide-down {
+    animation: popupSlideDown 0.3s ease forwards;
+  }
+  
+  .popup-slide-up {
+    animation: popupSlideUp 0.3s ease forwards;
+  }
+  
+  .popup-zoom-in {
+    animation: popupZoomIn 0.3s ease forwards;
+  }
+  
+  @keyframes popupFadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+  
+  @keyframes popupSlideDown {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+  
+  @keyframes popupSlideUp {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -40%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+  
+  @keyframes popupZoomIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .popup-container {
+      width: 95vw !important;
+      max-height: 85vh;
+      top: 10%;
+      transform: translateX(-50%);
+    }
+    
+    .popup-content {
+      padding: 20px;
+    }
+    
+    .popup-title {
+      font-size: 20px;
+    }
+  }
+  
+  /* css/popup-form-admin.css */
+  
+  .popup-form-admin .field-order-list {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+    min-height: 60px;
+    padding: 10px;
+  }
+  
+  .popup-form-admin .field-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 5px 0;
+    cursor: move;
+    position: relative;
+  }
+  
+  .popup-form-admin .field-handle {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>') no-repeat center;
+    background-size: 16px;
+    cursor: grab;
+    margin-right: 10px;
+  }
+  
+  .popup-form-admin .field-placeholder {
+    background: #e1f5fe;
+    border: 2px dashed #0288d1;
+    height: 40px;
+    margin: 5px 0;
+  }
+  
+  .popup-form-admin .popup-preview-btn {
+    margin-top: 10px;
+    background: #0073aa;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .popup-form-admin .popup-preview-btn:hover {
+    background: #005a87;
+  }
+  
+  /* Fieldset styling */
+  .popup-form-admin fieldset {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 10px 0;
+  }
+  
+  .popup-form-admin fieldset legend {
+    font-weight: bold;
+    padding: 0 10px;
+  }
+
+
+
+/* Field Styles */
+.popup-field {
+    margin: 15px 0;
+    padding: 10px 0;
+  }
+  
+  .popup-field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 14px;
+  }
+  
+  .popup-field-text p,
+  .popup-field-textarea div {
+    margin: 0;
+    line-height: 1.5;
+    color: #666;
+  }
+  
+  .popup-field-html div {
+    margin: 10px 0;
+  }
+  
+  .popup-field-heading .popup-heading {
+    margin: 10px 0;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .popup-field-image {
+    text-align: center;
+  }
+  
+  .popup-field-image .popup-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .popup-field-link .popup-link {
+    color: #0073aa;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: 1px solid #0073aa;
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 0.2s ease;
+  }
+  
+  .popup-field-link .popup-link:hover {
+    background: #0073aa;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .popup-field-block {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 15px;
+    background: #f9f9f9;
+  }
+  
+  /* Admin form styles */
+  .popup-form-admin .field-type-ajax-wrapper {
+    margin-top: 10px;
+  }
+  
+  .popup-form-admin .fieldset-wrapper > .form-item {
+    margin-bottom: 15px;
+  }
+  
+  .popup-form-admin .form-actions {
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .popup-form-admin .button--small {
+    padding: 4px 8px;
+    font-size: 12px;
+  }

@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Template for popup form field list (admin interface).
+ *
+ * Available variables:
+ * - fields: Array of field configurations.
+ * - field_order: Array of field order.
+ */
+#}
+<div class="popup-form-admin">
+  <div class="field-order-section">
+    <h3>{{ 'Field Order'|t }}</h3>
+    <p>{{ 'Drag and drop to reorder fields.'|t }}</p>
+    
+    <div class="field-order-list" id="field-order-list">
+      {% for field_id in field_order %}
+        {% if fields[field_id] %}
+          <div class="field-item" data-field-id="{{ field_id }}">
+            <span class="field-handle" title="{{ 'Drag to reorder'|t }}"></span>
+            <strong>{{ fields[field_id].label|default('Field ' ~ field_id) }}</strong>
+            <span class="field-type">{{ fields[field_id].type|default('text') }}</span>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    
+    <button type="button" class="popup-preview-btn">{{ 'Preview Popup'|t }}</button>
+  </div>
+</div>
