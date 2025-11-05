@@ -1,0 +1,137 @@
+<?php
+/**
+ * @file
+ * Contains popup_form.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function popup_form_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.popup_form':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Popup Form module allows you to create configurable popup forms that can be triggered by any CSS selector on your site.') . '</p>';
+      $output .= '<h3>' . t('Features') . '</h3>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('Create unlimited popup forms with custom triggers') . '</li>';
+      $output .= '<li>' . t('Integrate with Webform module') . '</li>';
+      $output .= '<li>' . t('Drag and drop field ordering') . '</li>';
+      $output .= '<li>' . t('Customizable popup settings (animations, dimensions, behavior)') . '</li>';
+      $output .= '<li>' . t('Responsive design with mobile support') . '</li>';
+      $output .= '</ul>';
+      $output .= '<h3>' . t('Configuration') . '</h3>';
+      $output .= '<p>' . t('Configure popup forms at <a href=":url">Administration » Configuration » User Interface » Popup Form</a>.', [':url' => \Drupal\Core\Url::fromRoute('popup_form.admin.settings')->toString()]) . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function popup_form_page_attachments(array &$attachments) {
+  /** @var \Drupal\popup_form\PopupFormManager $popup_manager */
+  $popup_manager = \Drupal::service('popup_form.popup_manager');
+
+  // Only load if popup forms should be loaded on this page
+  if ($popup_manager->shouldLoadPopupForms()) {
+    // Attach popup form library
+    $attachments['#attached']['library'][] = 'popup_form/popup_form';
+    
+    // Add JavaScript settings
+    $settings = $popup_manager->getJavaScriptSettings();
+    if (!empty($settings)) {
+      $attachments['#attached']['drupalSettings']['popup_form'] = $settings;
+    }
+
+    // Include default CSS if enabled
+    $config = \Drupal::config('popup_form.settings');
+    if ($config->get('include_default_css') !== FALSE) {
+      $theme = $config->get('default_theme') ?: 'default';
+      $attachments['#cache']['tags'][] = 'config:popup_form.settings';
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function popup_form_theme() {
+  return [
+    'popup_form_container' => [
+      'variables' => [
+        'popup_id' => NULL,
+        'title' => NULL,
+        'description' => NULL,
+        'content' => NULL,
+        'settings' => [],
+      ],
+      'template' => 'popup-form-container',
+    ],
+    'popup_form_field_list' => [
+      'variables' => [
+        'fields' => [],
+        'field_order' => [],
+      ],
+      'template' => 'popup-form-field-list',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_webform_submission_insert().
+ */
+function popup_form_webform_submission_insert($webform_submission) {
+  // Handle webform submissions from popup forms
+  // You can add custom logic here to process popup form submissions
+  
+  $webform_id = $webform_submission->getWebform()->id();
+  
+  // Check if this webform is used in any popup forms
+  $popup_forms = \Drupal::entityTypeManager()
+    ->getStorage('popup_form')
+    ->loadByProperties(['webform_id' => $webform_id, 'status' => TRUE]);
+    
+  if (!empty($popup_forms)) {
+    // Log or perform additional actions for popup form submissions
+    \Drupal::logger('popup_form')->info('Webform submission received from popup form. Webform: @webform_id', [
+      '@webform_id' => $webform_id,
+    ]);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function popup_form_form_webform_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  // Add custom handling for webforms displayed in popups
+  $webform = $form_state->getFormObject()->getEntity();
+  
+  // Check if this webform is used in popup forms
+  $popup_forms = \Drupal::entityTypeManager()
+    ->getStorage('popup_form')
+    ->loadByProperties(['webform_id' => $webform->id(), 'status' => TRUE]);
+    
+  if (!empty($popup_forms)) {
+    // Add CSS class to identify popup forms
+    $form['#attributes']['class'][] = 'popup-webform';
+    
+    // Add submit handler for popup-specific actions
+    $form['#submit'][] = 'popup_form_webform_submit_handler';
+  }
+}
+
+/**
+ * Custom submit handler for popup webforms.
+ */
+function popup_form_webform_submit_handler(array &$form, FormStateInterface $form_state) {
+  // Add JavaScript to close popup on successful submission
+  $form['#attached']['library'][] = 'popup_form/popup_form';
+  $form['#attached']['drupalSettings']['popup_form']['close_on_submit'] = TRUE;
+}

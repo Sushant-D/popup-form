@@ -1,0 +1,5 @@
+popup_form.add:
+  route_name: popup_form.admin.add
+  title: 'Add Popup Form'
+  appears_on:
+    - popup_form.admin.collection
