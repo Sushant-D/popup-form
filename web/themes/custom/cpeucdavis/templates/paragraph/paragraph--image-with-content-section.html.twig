@@ -1,0 +1,102 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a Program Area paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+    <section {{ attributes.addClass(classes, 'impact-split-section').setAttribute('aria-label', 'Impact Split Areas') }}>
+        
+        {% set highlight_word_count = paragraph.field_highlight_word_count.value|default(0) %}
+
+            {# Banner Description Processing - Get the raw description value and modify paragraph tags to include styling classes #}
+            {% set field_description = content.field_description['#items'].0.value %}
+            {% set modified_field_description = field_description|replace({'<p>': '<p class="impact-split-text">'}) %}
+
+            {# Main Banner Image Processing - Extract image URL with optional image style applied #}
+            {% set image_style = content.field_image.0['#image_style'] ?? null %}
+            {% set media = paragraph.field_image.entity %}
+            {% set image_url = media.field_media_image.entity.fileuri %}
+            {# Apply image style if one exists, otherwise use direct file URL #}
+            {% if image_style %}
+                {% set image_url = image_url|image_style(image_style) %}
+            {% else %}
+                {% set image_url = file_url(image_url) %}
+            {% endif %}
+            {# Get image file object for additional properties (alt text, etc.) #}
+            {% set image_file = media.field_media_image.0 ?? null %}
+
+
+
+            {# Main Bannerackground Image Processing - Extract image URL with optional image style applied #}
+            {% set background_image_style = content.field_background_image.0['#image_style'] ?? null %}
+            {% set background_media = paragraph.field_background_image.entity %}
+            {% set background_image_url = background_media.field_media_image.entity.fileuri %}
+            {# Apply image style if one exists, otherwise use direct file URL #}
+            {% if background_image_style %}
+                {% set background_image_url = background_image_url|image_style(background_image_style) %}
+            {% else %}
+                {% set background_image_url = file_url(background_image_url) %}
+            {% endif %}
+            {# Get image file object for additional properties (alt text, etc.) #}
+            {% set background_image_file = background_media.field_media_image.0 ?? null %}
+
+
+
+            {# Banner CTA Icon Processing - Extract icon image URL with optional image style applied #}
+            {% set icon_image_style = content.field_banner_cta_icon.0['#image_style'] ?? null %}
+            {% set icon_media = paragraph.field_banner_cta_icon.entity %}
+            {% set icon_image_url = icon_media.field_media_image.entity.fileuri %}
+            {# Apply image style to icon if one exists, otherwise use direct file URL #}
+            {% if icon_image_style %}
+                {% set icon_image_url = icon_image_url|image_style(icon_image_style) %}
+            {% else %}
+                {% set icon_image_url = file_url(icon_image_url) %}
+            {% endif %}
+            {# Get icon image file object for additional properties #}
+            {% set icon_image_file = icon_media.field_media_image.0 ?? null %}
+
+        <div class="impact-split-left">
+            
+            <div class="cta-image-overlay-banner">
+                {% for i in 1..highlight_word_count %}
+                    {% if i == 1 %}
+                    <div class="overlay-text-solid">{{content.field_highlight_word}}</div>
+                    {% else %}
+                    <div class="overlay-text">{{content.field_highlight_word}}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {# <img src="./images/35f5a438583d6d1ae93b89686fbdfd9150ce0961.png" alt="Person" class="impact-split-person-img"> #}
+            <div class="impact-split-pattern" aria-hidden="true">
+                <img 
+                src="{{ image_url }}" 
+                alt="{{ image_file.alt|default('') }}" 
+                class="impact-split-person-img">
+                {# <img src="./images/impact-pattern.png" alt="" class="impact-pattern-img"> #}
+            </div>
+        </div>
+
+        <div class="impact-split-right">
+            <img 
+            src="{{ icon_image_url }}" 
+            alt="{{ icon_image_file.alt|default('') }}" 
+            class="impact-arrow-img">
+            {# <img src="./images/Arrows.png" alt="" class="impact-arrow-img"> #}
+            <div class="impact-split-content">
+                {{ modified_field_description|raw }}
+            </div>
+        </div>
+    </section>
+  {% endblock %}
+{% endblock paragraph %}

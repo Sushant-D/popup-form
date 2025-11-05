@@ -26,6 +26,8 @@
                 {% set highlight_word = card_entity.field_highlight_word.value %}
                 {% set description = card_entity.field_description.value %}
                 {% set media = card_entity.field_image.entity %}
+                {% set highlightWordAlignment = card_entity.field_align_image.value %}
+                {% set customClass = card_entity.field_custom_class.value %}
                 
                 {% set cta_title = card_entity.field_cta_link.title %}
                 {% set cta_uri = card_entity.field_cta_link.uri %}
@@ -74,12 +76,23 @@
                 {# Content section #}
                 <div class="program-card-content">
                   {% if heading or highlight_word %}
-                    <h2 class="program-card-title">
-                      {% if heading %}
-                        <span class="title-solid">{{ heading }}</span>
-                      {% endif %}
-                      {% if highlight_word %}
-                        <span class="title-outline-program-card">{{ highlight_word }}</span>
+                    <h2 class="program-card-title{% if customClass %} {{ customClass }}{% endif %}">
+                      {% if highlightWordAlignment == 'left' %}
+
+                        {% if highlight_word %}
+                          <span class="title-outline-program-card">{{ highlight_word }}</span>
+                        {% endif %}
+                        {% if heading %}
+                          <span class="title-solid">{{ heading }}</span>
+                        {% endif %}
+                        
+                      {% else %}
+                        {% if heading %}
+                          <span class="title-solid">{{ heading }}</span>
+                        {% endif %}
+                        {% if highlight_word %}
+                          <span class="title-outline-program-card">{{ highlight_word }}</span>
+                        {% endif %}
                       {% endif %}
                     </h2>
                   {% endif %}

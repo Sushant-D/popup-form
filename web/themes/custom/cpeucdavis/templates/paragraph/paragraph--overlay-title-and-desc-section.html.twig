@@ -1,0 +1,61 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a Program Area paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+  {% block content %}
+    {% for item in paragraph.field_overlay_title_desc_items %}
+        {% set section_entity = item.entity %}
+        {% set sectionTitle = section_entity.field_heading.value %}
+        {% set sectionCount = section_entity.field_highlight_word_count.value|default(1) %}
+
+        {# Safely get media entity and image URL #}
+        {% set media = item.entity.field_banner_cta_icon.entity ?? null %}
+        {% set image_file = media.field_media_image.0 ?? null %}
+        {% set image_style = item.entity.field_banner_cta_icon.0['#image_style'] ?? null %}
+        {% set image_url = image_file.entity.fileuri ?? null %}
+
+        {# Apply image style if available #}
+        {% if image_url %}
+          {% if image_style %}
+            {% set image_url = image_url|image_style(image_style) %}
+          {% else %}
+            {% set image_url = file_url(image_url) %}
+          {% endif %}
+        {% endif %}
+
+        <section {{ attributes.addClass(classes, 'choose-split-section').setAttribute('aria-label', 'Split Areas') }}>
+            <div class="choose-split-left">
+                <h2 class="choose-split-main-title">{{ sectionTitle }}</h2>
+                {% for i in 1..(sectionCount - 1) %}
+                    <div class="choose-split-title-outline{% if i > 1 %}-{{ i }}{% endif %}" aria-hidden="true">
+                        {{ sectionTitle }}
+                    </div>
+                {% endfor %}
+
+                {# Show image decoration ONLY if image exists #}
+                {% if image_url %}
+                    <div class="choose-split-decoration">
+                        <img src="{{ image_url }}" alt="{{ image_file.alt|default('') }}" class="choose-split-circles-img">
+                    </div>
+                {% endif %}
+            </div>
+        
+            <div class="choose-split-right">
+                {{ section_entity.field_description.value|render|replace({'<p>':'<p class="choose-split-text">'})|raw }}
+            </div>
+        </section>
+    {% endfor %}
+  {% endblock %}
+{% endblock paragraph %}

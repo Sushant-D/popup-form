@@ -1,0 +1,42 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a paragraph.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+{% block paragraph %}
+    {% block content %}
+        <section {{ attributes.addClass(classes).setAttribute('aria-label', 'Client Section Contents').addClass('clients-section') }}>
+            <div class="container">
+                <div class="clients-content">
+                    <div class="clients-left">
+                        <h2>{{content.field_heading|raw}}</h2>
+                        {{content.field_description|raw}}
+                    </div>
+        
+                    <div class="clients-right">
+                        {{content.field_banner_description|raw}}
+                        {# <ul>
+                            <li>California Department of Transportation</li>
+                            <li>California Department of Industrial Relations</li>
+                            <li>State Water Resources Control Board</li>
+                            <li>California Department of Water Resources</li>
+                            <li>Alta California Regional Center</li>
+                            <li>Northern California Power Agency</li>
+                            <li>California Department of Motor Vehicles</li>
+                        </ul> #}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endblock %}
+{% endblock paragraph %}
