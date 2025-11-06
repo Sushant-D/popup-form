@@ -1,0 +1,5 @@
+popup_form.admin.settings:
+  title: 'Popup Form'
+  description: 'Configure popup forms and their settings'
+  parent: system.admin_config_ui
+  route_name: popup_form.admin.settings

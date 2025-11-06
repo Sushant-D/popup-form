@@ -1,0 +1,24 @@
+popup_form:
+  version: 1.x
+  js:
+    js/popup-form.js: {}
+  css:
+    theme:
+      css/popup-form.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+
+admin:
+  version: 1.x
+  js:
+    js/popup-form-admin.js: {}
+  css:
+    theme:
+      css/popup-form-admin.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui
+    - core/jquery.ui.sortable
+    - core/drupal

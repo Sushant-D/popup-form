@@ -1,0 +1,9 @@
+name: 'Popup Form'
+type: module
+description: 'Configurable popup forms with drag-and-drop field ordering and webform integration'
+package: 'Custom'
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:block
+  - drupal:system
+  - webform:webform

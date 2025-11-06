@@ -1,0 +1,79 @@
+popup_form.admin.settings:
+  path: '/admin/config/user-interface/popup-form'
+  defaults:
+    _form: '\Drupal\popup_form\Form\PopupFormSettingsForm'
+    _title: 'Popup Form Settings'
+  requirements:
+    _permission: 'administer popup forms'
+
+# Collection route
+popup_form.admin.collection:
+  path: '/admin/config/user-interface/popup-form/manage'
+  defaults:
+    _entity_list: 'popup_form'
+    _title: 'Manage Popup Forms'
+  requirements:
+    _permission: 'administer popup forms'
+
+# Canonical/View route
+entity.popup_form.canonical:
+  path: '/admin/config/user-interface/popup-form/{popup_form}'
+  defaults:
+    _controller: '\Drupal\popup_form\Controller\PopupFormController::view'
+    _title_callback: '\Drupal\popup_form\Controller\PopupFormController::title'
+  requirements:
+    _permission: 'administer popup forms'
+  parameters:
+    popup_form:
+      type: entity:popup_form
+
+# Add form
+entity.popup_form.add_form:
+  path: '/admin/config/user-interface/popup-form/add'
+  defaults:
+    _entity_form: 'popup_form.add'
+    _title: 'Add Popup Form'
+  requirements:
+    _permission: 'administer popup forms'
+
+# Edit form  
+entity.popup_form.edit_form:
+  path: '/admin/config/user-interface/popup-form/{popup_form}/edit'
+  defaults:
+    _entity_form: 'popup_form.edit'
+    _title: 'Edit Popup Form'
+  requirements:
+    _permission: 'administer popup forms'
+  parameters:
+    popup_form:
+      type: entity:popup_form
+
+# Delete form
+entity.popup_form.delete_form:
+  path: '/admin/config/user-interface/popup-form/{popup_form}/delete'
+  defaults:
+    _entity_form: 'popup_form.delete'
+    _title: 'Delete Popup Form'
+  requirements:
+    _permission: 'administer popup forms'
+  parameters:
+    popup_form:
+      type: entity:popup_form
+
+# Collection route
+entity.popup_form.collection:
+  path: '/admin/config/user-interface/popup-form/manage'
+  defaults:
+    _entity_list: 'popup_form'
+    _title: 'Popup Forms'
+  requirements:
+    _permission: 'administer popup forms'
+
+# Keep backwards compatibility routes
+popup_form.admin.add:
+  path: '/admin/config/user-interface/popup-form/add-popup'
+  defaults:
+    _entity_form: 'popup_form.add'
+    _title: 'Add Popup Form'
+  requirements:
+    _permission: 'administer popup forms'

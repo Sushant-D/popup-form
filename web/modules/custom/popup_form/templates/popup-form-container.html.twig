@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ * Template for popup form container.
+ *
+ * Available variables:
+ * - popup_id: The popup form ID.
+ * - title: The popup title.
+ * - description: The popup description.
+ * - content: The popup content (webform, etc.).
+ * - settings: Popup settings array.
+ */
+#}
+<div id="popup-form-{{ popup_id }}" class="popup-form-wrapper {{ settings.theme_class|default('') }}">
+  {% if settings.overlay %}
+    <div class="popup-overlay"></div>
+  {% endif %}
+  
+  <div class="popup-container" role="dialog" aria-modal="true" {% if title %}aria-labelledby="popup-title-{{ popup_id }}"{% endif %}>
+    {% if settings.close_button %}
+      <button class="popup-close" aria-label="{{ 'Close popup'|t }}">&times;</button>
+    {% endif %}
+    
+    <div class="popup-content">
+      {% if title %}
+        <h2 id="popup-title-{{ popup_id }}" class="popup-title">{{ title }}</h2>
+      {% endif %}
+      
+      {% if description %}
+        <div class="popup-description">{{ description|raw }}</div>
+      {% endif %}
+      
+      <div class="popup-form-content">
+        {{ content|raw }}
+      </div>
+    </div>
+  </div>
+</div>
