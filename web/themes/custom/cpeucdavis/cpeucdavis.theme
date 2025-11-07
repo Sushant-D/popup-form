@@ -8,6 +8,37 @@
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_preprocess_html().
+ * 
+ * Adds the page title to the body tag.
+ */
+function cpeucdavis_preprocess_html(&$variables) {
+  // Get the current route match service
+  $route_match = \Drupal::routeMatch();
+  
+  // Get the page title
+  $title = \Drupal::service('title_resolver')->getTitle(
+    \Drupal::request(),
+    $route_match->getRouteObject()
+  );
+  
+  // Convert title to string (in case it's a render array)
+  if (is_array($title)) {
+    $title = \Drupal::service('renderer')->renderPlain($title);
+  }
+  
+  // Add title as a sanitized class to the body tag
+  if ($title) {
+    $title_class = Html::cleanCssIdentifier(strtolower($title));
+    $variables['attributes']['class'][] = 'page-title--' . $title_class;
+    
+    // Also add as a data attribute for easy access via CSS/JS
+    $variables['attributes']['data-page-title'] = $title;
+  }
+}
 
 /**
  * Implements template_preprocess_page().

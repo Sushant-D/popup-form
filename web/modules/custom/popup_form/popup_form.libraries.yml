@@ -9,6 +9,21 @@ popup_form:
     - core/jquery
     - core/drupal
     - core/drupalSettings
+    - core/once
+
+popup_form_enhanced:
+  version: 1.x
+  js:
+    js/popup-form-enhanced.js: {}
+  css:
+    theme:
+      css/popup-form-enhanced.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/once
+    - popup_form/popup_form
 
 admin:
   version: 1.x
@@ -17,8 +32,12 @@ admin:
   css:
     theme:
       css/popup-form-admin.css: {}
+      css/popup-form-admin-enhanced.css: {}
   dependencies:
     - core/jquery
     - core/jquery.ui
     - core/jquery.ui.sortable
     - core/drupal
+    - core/drupalSettings
+    - core/once
+    - core/drupal.ajax

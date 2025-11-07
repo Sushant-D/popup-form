@@ -1,4 +1,10 @@
 services:
   popup_form.popup_manager:
     class: Drupal\popup_form\PopupFormManager
-    arguments: ['@entity_type.manager', '@config.factory', '@renderer', '@plugin.manager.block']
+    arguments: 
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@renderer'
+      - '@plugin.manager.block'
+      - '@module_handler'
+      - '@entity_display.repository'
