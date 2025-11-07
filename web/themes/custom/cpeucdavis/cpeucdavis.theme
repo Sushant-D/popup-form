@@ -94,3 +94,24 @@ function cpeucdavis_preprocess_page(array &$variables) {
     }
 
 }
+
+/**
+ * Implements hook_preprocess_HOOK() for status_messages.
+ */
+function cpeucdavis_preprocess_status_messages(&$variables) {
+    // Create wrapper attributes for the parent div
+    if (!isset($variables['wrapper_attributes'])) {
+      $variables['wrapper_attributes'] = new \Drupal\Core\Template\Attribute();
+    }
+    
+    // Add custom classes to wrapper
+    $variables['wrapper_attributes']->addClass([
+      'cpeucdavis-messages-wrapper',
+      'custom-alert-container'
+    ]);
+    
+    // Ensure attributes exist for child divs
+    if (!isset($variables['attributes'])) {
+      $variables['attributes'] = new \Drupal\Core\Template\Attribute();
+    }
+}

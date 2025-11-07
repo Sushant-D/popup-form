@@ -34,3 +34,7 @@ regions:
   footer_fourth: 'Footer fourth'
   footer_fifth: 'Footer fifth'
   none: None
+
+components:
+  namespaces:
+    cpeucdavis: components
