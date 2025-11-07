@@ -677,6 +677,7 @@ a.btn:focus-visible {
    object-fit: cover;
    display: block;
    position: relative;
+   filter: blur(5px);
    z-index: 2;
  }
 .image-side.home-banner img{
@@ -1368,7 +1369,32 @@ h2.highlight-yellow {
   object-fit: cover;
   display: block;
 }
+.page-node-5 .overlay-image-png-format img{
+  transform: scaleX(-1);
+}
+.page-node-5 .cta-section .overlay-image-png-format img {
+  transform: unset;
+}
+.page-node-5 .image-side{
+  border-right: unset;
+  border-left:1px solid var(--light);
+}
+.page-node-5 .image-side .cta-image-overlay-banner {
+      font-size: 155px;
+}
+.page-node-5 .content-wrapper{
+  padding: 60px 0 60px 140px;
+}
+.page-node-5 .journey-bar{
+  padding: 35px 140px;
+}
+.page-node-6 .content-wrapper {
+  padding: 60px 0 60px 140px;
+}
 
+.page-node-6 .journey-bar {
+  padding: 35px 140px;
+}
 .bg-full-img-overlay {
   position: absolute;
   top: 0;
@@ -1554,10 +1580,10 @@ font-size: clamp(20px, 2vw, 30px);
 
 .overlay-image-png-format {
   position: absolute;
-  bottom: 0;
   left: 0;
   right: 0;
-  top: 0;
+  bottom: 0;
+  top: 0px;
 }
 
 .overlay-image-png-format img {
@@ -1565,6 +1591,7 @@ font-size: clamp(20px, 2vw, 30px);
   width: 100%;
   object-fit: cover;
   filter: blur(0px);
+  object-position: top;
 }
   .cta-buttons-column {
    background: var(--aggieblue);
@@ -1694,6 +1721,7 @@ font-size: clamp(20px, 2vw, 30px);
       padding-top: 30px;
       display: flex;
       justify-content: space-between;
+      width: 100%;
       align-items: center;
       flex-wrap: wrap;
       gap: 20px;
@@ -1993,7 +2021,7 @@ grid-template-columns: 0.8fr 1.2fr;
  }
 
  .quote-text {
-   font-size: clamp(45px, 2vw, 70px);
+   font-size: 70px;
    font-weight: 800;
    color: var(--aggiegold);
    text-transform: uppercase;
@@ -2068,12 +2096,12 @@ grid-template-columns: 0.8fr 1.2fr;
 
  .workforce-content {
    display: grid;
-   grid-template-columns: 1fr 1fr;
+   grid-template-columns: 0.8fr 1.2fr;
    gap: 80px;
  }
 
  .workforce-left h2 {
-   font-size: clamp(2rem, 4vw, 60px);
+   font-size: 60px;
    font-weight: 900;
    color: var(--aggiegold);
    text-transform: uppercase;
@@ -2089,15 +2117,28 @@ grid-template-columns: 0.8fr 1.2fr;
  }
 
  .workforce-right p {
-   font-size: clamp(1rem, 1.3vw, 30px);
+   font-size: 30px;
    font-weight: 600;
    color: var(--light);
-   line-height: 1.7;
+   line-height: 1.6;
    text-transform: uppercase;
-   max-width: 500px;
+   max-width: 700px;
  }
 
- 
+ .page-node-5 .program-card-title{
+  font-size: 40px;
+ }
+.page-node-5 .program-card-content{
+  max-width: 900px;
+}
+ .page-node-6 .program-card-title {
+   font-size: 40px;
+ }
+
+ .page-node-6 .program-card-content {
+   max-width: 900px;
+ }
+
  .clients-section {
    background: var(--light);
    padding: 80px 0;
@@ -2126,6 +2167,7 @@ grid-template-columns: 0.8fr 1.2fr;
    color: var(--darkblue);
    line-height: 1.5;
    text-transform: uppercase;
+   max-width: 500px;
  }
 
  .clients-right ul {
@@ -2133,7 +2175,7 @@ grid-template-columns: 0.8fr 1.2fr;
    padding: 0;
  }
 
- .clients-right li {
+ .clients-right li{
    font-size: clamp(22px, 1.8vw, 30px);
    color: var(--darkblue);
    line-height: 1.8;
@@ -2304,7 +2346,13 @@ grid-template-columns: 0.8fr 1.2fr;
   color: var(--light);
   margin: 0;
 }
-
+.page-node-6 .text-pgraph-banner {
+  font-size: clamp(16px, 1.8vw, 30px);
+  max-width: 650px;
+}
+.page-node-6 .benefits-text{
+  font-size: 7.5rem;
+}
 /* Instagram Section */
 .instagram-section {
   background: linear-gradient(135deg, #0047AB 0%, #003A8C 100%);
@@ -2428,17 +2476,37 @@ grid-template-columns: 0.8fr 1.2fr;
 .instagram-slider .owl-dot.active {
   background: #FFBF00 !important;
 }
-
+.commom-width-section{
+  padding: 0 140px;
+}
 /*responsive*/
 @media (min-width: 2900px){
   .image-side .cta-image-overlay-banner {
       font-size: 292px;
+    }
+    .program-area-title h2 {
+      font-size: clamp(3rem, 9vw, 11rem);
+    }
+    .right-panel-area .description{
+      max-width: 730px;
+    }
+    .program-card-description p{
+      max-width: 800px;
     }
 }
 @media (min-width: 2500px) and (max-width:2899px) {
     .image-side .cta-image-overlay-banner {
         font-size: 242px;
       }
+        .program-area-title h2 {
+          font-size: clamp(3rem, 9vw, 11rem);
+        }
+        .right-panel-area .description {
+          max-width: 730px;
+        }
+         .program-card-description p {
+           max-width: 800px;
+         }
 }
 @media (min-width: 1920px) and (max-width: 2499px) {
   .cta-image-overlay {
@@ -2447,6 +2515,15 @@ grid-template-columns: 0.8fr 1.2fr;
   .image-side .cta-image-overlay-banner {
     font-size: 182px;
   }
+  .program-area-title h2 {
+    font-size: clamp(3rem, 9vw, 11rem);
+  }
+  .right-panel-area .description {
+    max-width: 730px;
+  }
+     .program-card-description p {
+       max-width: 800px;
+     }
 }
 @media (min-width: 1700px) and (max-width: 1919px) {
   /* .cta-image-overlay {
@@ -2456,6 +2533,15 @@ grid-template-columns: 0.8fr 1.2fr;
   .image-side .cta-image-overlay-banner {
     font-size: 160px;
   }
+  .program-area-title h2 {
+    font-size: clamp(3rem, 9vw, 11rem);
+  }
+  .right-panel-area .description {
+    max-width: 730px;
+  }
+     .program-card-description p {
+       max-width: 800px;
+     }
 }
 @media (min-width: 1500px) and (max-width: 1699px) {
   /* .cta-image-overlay {
@@ -2465,6 +2551,15 @@ grid-template-columns: 0.8fr 1.2fr;
   .image-side .cta-image-overlay-banner {
     font-size: 145px;
   }
+  .program-area-title h2 {
+    font-size: clamp(3rem, 9vw, 11rem);
+  }
+  .right-panel-area .description {
+    max-width: 730px;
+  }
+     .program-card-description p {
+       max-width: 800px;
+     }
 }
 @media (max-width: 1407px){
   .ucd-navbar-nav{
@@ -2483,6 +2578,13 @@ grid-template-columns: 0.8fr 1.2fr;
   .image-side .cta-image-overlay-banner {
       font-size: 113px;
     }
+        .page-node-5 .image-side .cta-image-overlay-banner {
+          font-size: 113px;
+        }
+        .page-node-6 .image-side .cta-image-overlay-banner {
+          font-size: 113px;
+        }
+
   h2.highlight-yellow{
     font-size: 32px;
   }
@@ -2523,6 +2625,15 @@ grid-template-columns: 0.8fr 1.2fr;
     .image-side .cta-image-overlay-banner {
       font-size: 100px;
     }
+    .page-node-5 .image-side .cta-image-overlay-banner {
+      font-size: 100px;
+    }
+         .page-node-6 .image-side .cta-image-overlay-banner {
+           font-size: 100px;
+         }
+        .quote-text {
+          font-size: 60px;
+        }
   /*--category-items-program-homrepage --*/
   .category-item{
     padding: 60px 80px 60px 80px;
@@ -2542,9 +2653,21 @@ grid-template-columns: 0.8fr 1.2fr;
     .content-wrapper {
       padding: 60px 0px 60px 60px;
     }
+    .page-node-5 .content-wrapper {
+      padding: 60px 0px 60px 60px;
+    }
+        .page-node-6 .content-wrapper {
+          padding: 60px 0px 60px 60px;
+        }
     .journey-bar{
       padding: 35px 45px;
     }
+    .page-node-5 .journey-bar {
+      padding: 35px 45px;
+    }
+         .page-node-6 .journey-bar {
+           padding: 35px 45px;
+         }
     .right-panel {
       padding: 100px 0px 100px 80px;
     }
@@ -2570,7 +2693,39 @@ grid-template-columns: 0.8fr 1.2fr;
          .right-panel {
            padding: 60px 80px 60px 60px;
          }
-
+                 .program-area-title {
+                   padding: 60px 60px 0px 60px;
+                 }
+.left-panel-area {
+  padding: 30px 60px 80px 60px;
+}
+.right-panel-area {
+  padding: 30px 60px 80px 60px;
+}
+.program-card-content {
+  position: relative;
+  z-index: 2;
+  padding: 60px 60px;
+}
+.grid-benefit-wrap .program-benefit-item {
+  min-height: 300px;
+}
+.grid-benefit-wrap .program-benefit-content{
+  padding: 30px 60px;
+  max-width: 500px;
+}
+.grid-benefit-wrap .program-benefit-title{
+  font-size: 30px;
+}
+.grid-benefit-wrap .program-benefit-description {
+  font-size: 20px;
+}
+.quote-text {
+  font-size: 50px;
+}
+ .commom-width-section {
+   padding: 0 60px;
+ }
 }
 
 @media (max-width: 1024px) {
@@ -2582,7 +2737,9 @@ grid-template-columns: 0.8fr 1.2fr;
     height: 250px;
     order: -1;
   }
-
+  .program-area-title h2 {
+      font-size: 80px;
+  }
   .benefits-text {
     font-size: 11.8rem;
     writing-mode: rl;
@@ -2593,6 +2750,12 @@ grid-template-columns: 0.8fr 1.2fr;
     .image-side .cta-image-overlay-banner {
       font-size: 95px;
     }
+    .page-node-5 .image-side .cta-image-overlay-banner {
+      font-size: 95px;
+    }
+        .page-node-6 .image-side .cta-image-overlay-banner {
+          font-size: 95px;
+        }
   /*program benefit section*/
     .program-benefits-section {
       padding: 60px 0;
@@ -2633,6 +2796,7 @@ grid-template-columns: 0.8fr 1.2fr;
   }
     .cta-text-column {
       min-height: unset;
+      justify-content: flex-start;
     }
        
   /*footer*/
@@ -2694,7 +2858,9 @@ grid-template-columns: 0.8fr 1.2fr;
 .instagram-card-image {
   height: 350px;
 }
-
+.quote-text {
+  font-size: 50px;
+}
 }
 
 @media (max-width: 991px) {
@@ -2706,23 +2872,49 @@ grid-template-columns: 0.8fr 1.2fr;
   .content-wrapper {
     padding: 40px;
   }
-
+  .page-node-5 .content-wrapper {
+    padding: 40px;
+  }
+     .page-node-6 .content-wrapper {
+       padding: 40px;
+     }
   .journey-bar {
     padding: 25px 40px;
     font-size: 22px;
+    border-bottom: 1px solid var(--light);
   }
+    .workforce-section{
+      border-top: 1px solid var(--light);
+      border-bottom: 1px solid var(--light);
+    }
+.page-node-5 .journey-bar {
+  padding: 25px 40px;
+    font-size: 22px;
+}
+.page-node-6 .journey-bar {
+  padding: 25px 40px;
+  font-size: 22px;
+}
+.quote-text {
+  font-size: 40px;
+}
   /*---split-section---*/
     .split-section {
     grid-template-columns: 1fr;
   }
-
+  .user-section-wrapper {
+    padding: 0 40px;
+  }
+  .stats-section-wrapper {
+    padding: 0 40px;
+  }
   .left-panel {
     border-right: none;
     border-bottom: 1px solid var(--light);
-    padding: 60px 80px 60px 60px;
+    padding: 60px 40px 60px 40px;
   }
   .right-panel{
-    padding: 60px 80px 60px 60px;
+    padding: 60px 40px 60px 40px;
   }
   /*stats section*/
  .stats-grid {
@@ -2738,13 +2930,19 @@ grid-template-columns: 0.8fr 1.2fr;
      }
 /*program area*/
  .program-area-title {
-   padding: 60px 40px 40px 40px;
+   padding: 60px 40px 0px 40px;
  }
+         .program-area-title h2 {
+           font-size: 60px;
+         }
+.right-panel-area .description {
+  max-width: unset;
+}
   .career-advance-program {
-    padding: 100px 60px 60px 60px;
+    padding: 100px 40px 60px 40px;
   }
     .category-item {
-      padding: 60px 60px 60px 60px;
+      padding: 60px 40px 60px 40px;
     }
  .panel-area-wrap {
    grid-template-columns: 1fr;
@@ -2754,7 +2952,7 @@ grid-template-columns: 0.8fr 1.2fr;
 }
  .left-panel-area,
  .right-panel-area {
-   padding: 60px 40px;
+   padding: 20px 40px 40px 40px;
  }
 
  .title-outline {
@@ -2763,9 +2961,11 @@ grid-template-columns: 0.8fr 1.2fr;
 
  /*program card*/
  .program-card-content {
-   padding: 50px 60px;
+   padding: 50px 40px;
  }
-
+  .grid-benefit-wrap .program-benefit-content {
+    padding: 30px 40px;
+  }
  .our-program-cta-btn {
    padding: 25px 50px;
  }
@@ -2801,17 +3001,59 @@ grid-template-columns: 0.8fr 1.2fr;
  .image-side .cta-image-overlay-banner {
    font-size: 82px;
  }
+.page-node-5 .image-side .cta-image-overlay-banner {
+  font-size: 82px;
+}
+.page-node-6 .image-side .cta-image-overlay-banner {
+  font-size: 82px;
+}
+.testimonial-left{
+  border-right: unset;
+  border-bottom: 1px solid var(--light);
+}
+.commom-width-section{
+  padding: 0 40px;
+}
+.read-story-btn{
+  padding: 30px 40px;
+}
+.cta-text-column{
+  border-right: unset;
+  border-bottom: 1px solid var(--light);
+}
+.cta-image-column{
+  border-right: unset;
+    border-bottom: 1px solid var(--light);
+}
+.clients-section {
+  padding: 60px 0;
+}
+.workforce-left h2 {
+  font-size: 40px;
+}
+.workforce-right p {
+  font-size: 22px;
+}
 }
 @media (max-width:860px){
   .image-side .cta-image-overlay-banner {
       font-size: 72px;
     }
+    .page-node-5 .image-side .cta-image-overlay-banner {
+      font-size: 72px;
+    }
+        .page-node-6 .image-side .cta-image-overlay-banner {
+          font-size: 72px;
+        }
   .benefits-text {
     font-size: 10.4rem;
   }
   .cta-image-overlay {
     font-size: 150px;
   }
+    .quote-text {
+      font-size: 35px;
+    }
 }
 @media (max-width: 768px) {
   .split-section{
@@ -2823,22 +3065,55 @@ grid-template-columns: 0.8fr 1.2fr;
   .stats-section-wrapper{
     padding: 0 40px;
   }
+    .commom-width-section {
+      padding: 0 40px;
+    }
   .career-advance-program{
     padding: 40px 40px 40px 40px;
   }
 .image-side {
     height: 350px;
   }
-
-  .content-wrapper {
-    padding: 30px;
+    .quote-text {
+      font-size: 30px;
+    }
+  .workforce-left h2 {
+    font-size: 37px;
   }
-
+  .content-wrapper {
+    padding: 40px;
+  }
+    .page-node-5 .content-wrapper {
+      padding: 40px;
+    }
+        .page-node-6 .content-wrapper {
+          padding: 40px;
+        }
   .journey-bar {
-    padding: 18px 30px;
+    padding: 18px 40px;
     font-size: 1rem;
   }
-
+  .page-node-5 .journey-bar {
+    padding: 18px 40px;
+      font-size: 1rem;
+  }
+    .page-node-6 .journey-bar {
+      padding: 18px 40px;
+      font-size: 1rem;
+    }
+  .program-card-title{
+    font-size: 2.5rem;
+  }
+  .program-area-title h2 {
+    font-size: 49px;
+  }
+  .left-panel-area,
+  .right-panel-area {
+    padding: 0px 40px 40px 40px;
+  }
+    .program-card-description p{
+      font-size: 20px;
+    }
   .outline-text {
     -webkit-text-stroke: 1.5px var(--light);
   }
@@ -2980,12 +3255,12 @@ grid-template-columns: 0.8fr 1.2fr;
   justify-content: flex-start;
 }
 /*program area*/
-.program-area-title {
+/* .program-area-title {
   padding: 50px 30px 30px 30px;
-}
-.category-item {
+} */
+/* .category-item {
   padding: 60px 40px 60px 40px;
-}
+} */
 
 .title-outline {
   -webkit-text-stroke: 2px var(--aggiegold);
@@ -3005,7 +3280,7 @@ grid-template-columns: 0.8fr 1.2fr;
 }
 /*program card*/
 .program-card-content {
-  padding: 40px 30px;
+  padding: 40px 40px;
 }
 
 .program-card-title {
@@ -3139,6 +3414,12 @@ grid-template-columns: 0.8fr 1.2fr;
  .image-side .cta-image-overlay-banner {
    font-size: 72px;
  }
+ .page-node-5 .image-side .cta-image-overlay-banner {
+   font-size: 72px;
+ }
+    .page-node-6 .image-side .cta-image-overlay-banner {
+      font-size: 72px;
+    }
  .text-heading-banner {
    font-size: clamp(28px, 4vw, 50px);
  }
@@ -3150,20 +3431,59 @@ grid-template-columns: 0.8fr 1.2fr;
   .image-side .cta-image-overlay-banner {
       font-size: 62px;
     }
+    .page-node-5 .image-side .cta-image-overlay-banner {
+      font-size: 62px;
+    }
+         .page-node-6 .image-side .cta-image-overlay-banner {
+           font-size: 62px;
+         }
+         .clients-right li {
+           font-size: 18px;
+           margin-bottom: 8px;
+         }
 .arrow-bottom {
   height: 250px;
 }
 .cta-image-overlay {
   font-size: 115px;
 }
+        .benefits-text {
+          font-size: 6.7rem;
+        }
+        
 }
 @media (max-width: 576px) {
   .category-title {
     font-size: 20px;
   }
+  .image-side.home-banner{
+    border-bottom: 1px solid var(--light);
+  }
+            .program-card-content {
+              padding: 40px 20px;
+            }
     .cta-image-overlay {
       font-size: 95px;
     }
+    .left-panel,
+    .right-panel {
+      padding: 40px 20px;
+    }
+    .page-node-5 .journey-bar {
+      padding: 18px 20px;
+    }
+        .page-node-6 .journey-bar {
+          padding: 18px 20px;
+        }
+    .content-wrapper {
+      padding: 20px;
+    }
+    .page-node-5 .content-wrapper {
+      padding: 20px;
+    }
+         .page-node-6 .content-wrapper {
+           padding: 20px;
+         }
   .category-item {
     padding: 40px 20px;
     min-height: 200px;
@@ -3185,7 +3505,9 @@ grid-template-columns: 0.8fr 1.2fr;
 .footer {
   padding: 60px 20px 20px 20px;
 }
-             
+                .commom-width-section {
+                  padding: 0 20px;
+                }
 .banner-container {
   grid-template-columns: 1fr;
 }
@@ -3195,6 +3517,12 @@ grid-template-columns: 0.8fr 1.2fr;
   .image-side .cta-image-overlay-banner {
     font-size: 95px;
   }
+.page-node-5 .image-side .cta-image-overlay-banner {
+  font-size: 95px;
+}
+.page-node-6 .image-side .cta-image-overlay-banner {
+  font-size: 95px;
+}
   .bg-full-img-title {
     font-size: clamp(3rem, 2vw, 5rem);
   }
@@ -3212,9 +3540,21 @@ grid-template-columns: 0.8fr 1.2fr;
      .image-side .cta-image-overlay-banner {
        font-size: 74px;
      }
+        .page-node-5 .image-side .cta-image-overlay-banner {
+          font-size: 74px;
+        }
+                 .page-node-6 .image-side .cta-image-overlay-banner {
+                   font-size: 74px;
+                 }
   .content-wrapper {
     padding: 20px;
   }
+ .page-node-5 .content-wrapper {
+    padding: 20px;
+  }
+     .page-node-6 .content-wrapper {
+       padding: 20px;
+     }
   .benefits-text {
     font-size: 5.1rem;
   }
@@ -3226,10 +3566,23 @@ grid-template-columns: 0.8fr 1.2fr;
     padding: 18px 20px;
     font-size: 0.95rem;
   }
-
+  .page-node-5 .journey-bar{
+    padding: 18px 20px;
+    font-size: 0.95rem;
+  }
+     .page-node-6 .journey-bar {
+       padding: 18px 20px;
+       font-size: 0.95rem;
+     }
   .journey-bar img {
     height: 20px;
   }
+  .page-node-5 .journey-bar img {
+    height: 20px;
+  }
+     .page-node-6 .journey-bar img {
+       height: 20px;
+     }
   .cta-image-overlay {
     font-size: 80px;
   }
@@ -3334,7 +3687,8 @@ grid-template-columns: 0.8fr 1.2fr;
     border-width: 3px;
   }
   .clients-right li {
-    font-size: 0.95rem;
+    font-size: 18px;
+    margin-bottom: 8px;
   }
   .programs-intro-section {
     padding: 50px 0 0 0;
@@ -3380,20 +3734,81 @@ grid-template-columns: 0.8fr 1.2fr;
   #programs-heading {
     font-size: 25px;
   }
+     .program-area-title h2 {
+       font-size: 39px;
+     }
+  .grid-benefit-wrap .program-benefit-content {
+    padding: 30px 20px;
+  }
+  .grid-benefit-wrap .program-benefit-title {
+    font-size: 22px;
+  }
+    .grid-benefit-wrap .program-benefit-description {
+      font-size: 18px;
+    }
+ .left-panel-area,
+ .right-panel-area {
+   padding: 0px 20px 20px 20px;
+ }
+  .program-card-title {
+    font-size: 2rem;
+  }
+.right-panel-area .description {
+  font-size: 20px;
+}
+.left-panel-area h2 {
+  font-size: 22px;
+}
+.clients-section{
+  padding: 40px 0;
+}
+        .clients-content {
+          gap: 10px;
+        }
+    .clients-left h2 {
+      margin-bottom: 15px;
+    }
+            .program-card-description p {
+              font-size: 18px;
+            }
 }
 @media (max-width:375px){
   .image-side .cta-image-overlay-banner {
       font-size: 63px;
     }
+  .page-node-5 .image-side .cta-image-overlay-banner {
+    font-size: 63px;
+  }
+     .page-node-6 .image-side .cta-image-overlay-banner {
+       font-size: 63px;
+     }
+        .program-area-title h2 {
+          font-size: 32px;
+        }
+    .page-node-5 .program-card-title {
+      font-size: 30px;
+    }
+        .page-node-6 .program-card-title {
+          font-size: 30px;
+        }
+            .bg-full-img-title {
+              font-size: 1.8rem;
+            }
+    .categories-grid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+            .benefits-text {
+              font-size: 4.1rem;
+            }
 }
-#testimonial-carousel {
+ #testimonial-carousel {
   max-width: 100% !important;
   overflow-x: hidden !important;
   position: relative;
   contain: inline-size layout;
 }
 
-#testimonial-carousel .owl-stage-outer {
+/*#testimonial-carousel .owl-stage-outer {
   max-width: 100% !important;
   overflow-x: hidden !important;
 }
@@ -3426,4 +3841,4 @@ grid-template-columns: 0.8fr 1.2fr;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
+ */
