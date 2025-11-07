@@ -69,7 +69,234 @@ function popup_form_requirements($phase) {
         'severity' => REQUIREMENT_WARNING,
       ];
     }
+
+    // Check if Paragraphs module is available for enhanced functionality
+    if (!$module_handler->moduleExists('paragraphs')) {
+      $requirements['popup_form_paragraphs'] = [
+        'title' => t('Popup Form - Paragraphs Integration'),
+        'value' => t('Paragraphs module not found'),
+        'description' => t('The Paragraphs module enables advanced content types in popup forms. <a href="@url">Download Paragraphs module</a>', [
+          '@url' => 'https://www.drupal.org/project/paragraphs',
+        ]),
+        'severity' => REQUIREMENT_INFO,
+      ];
+    }
+
+    // Check if Paragraphs Previewer is available
+    if ($module_handler->moduleExists('paragraphs') && !$module_handler->moduleExists('paragraphs_previewer')) {
+      $requirements['popup_form_paragraphs_previewer'] = [
+        'title' => t('Popup Form - Paragraphs Previewer'),
+        'value' => t('Paragraphs Previewer module not found'),
+        'description' => t('The Paragraphs Previewer module provides enhanced preview functionality. <a href="@url">Download Paragraphs Previewer module</a>', [
+          '@url' => 'https://www.drupal.org/project/paragraphs_previewer',
+        ]),
+        'severity' => REQUIREMENT_INFO,
+      ];
+    }
   }
   
   return $requirements;
+}
+
+/**
+ * Migrate existing popup forms to use new content_items structure.
+ */
+function popup_form_update_11001() {
+  $config_factory = \Drupal::configFactory();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $popup_form_storage = $entity_type_manager->getStorage('popup_form');
+  
+  // Load all popup form entities
+  $popup_forms = $popup_form_storage->loadMultiple();
+  $updated_count = 0;
+  
+  foreach ($popup_forms as $popup_form) {
+    $needs_update = FALSE;
+    $content_items = $popup_form->get('content_items') ?: [];
+    
+    // If content_items is empty but webform_id exists, migrate it
+    if (empty($content_items) && $popup_form->get('webform_id')) {
+      $content_items[] = [
+        'content_type' => 'webform',
+        'config' => [
+          'webform_id' => $popup_form->get('webform_id'),
+        ],
+        'weight' => 0,
+      ];
+      $needs_update = TRUE;
+    }
+    
+    // If there are old fields, migrate them
+    $fields = $popup_form->get('fields') ?: [];
+    if (!empty($fields)) {
+      $weight = count($content_items);
+      foreach ($fields as $field) {
+        $content_item = [
+          'weight' => $weight++,
+        ];
+        
+        // Determine content type based on field type
+        switch ($field['type'] ?? '') {
+          case 'text':
+          case 'textarea':
+            $content_item['content_type'] = 'custom_text';
+            $content_item['config'] = [
+              'text_content' => [
+                'value' => $field['content'] ?? '',
+                'format' => 'basic_html',
+              ],
+            ];
+            break;
+            
+          case 'html':
+            $content_item['content_type'] = 'custom_html';
+            $content_item['config'] = [
+              'html_content' => $field['content'] ?? '',
+            ];
+            break;
+            
+          case 'block':
+            if (!empty($field['block_id'])) {
+              $content_item['content_type'] = 'block';
+              $content_item['config'] = [
+                'block_id' => $field['block_id'],
+              ];
+            }
+            break;
+            
+          default:
+            // Skip unknown field types
+            continue 2;
+        }
+        
+        $content_items[] = $content_item;
+      }
+      $needs_update = TRUE;
+    }
+    
+    // Save updated configuration
+    if ($needs_update) {
+      $popup_form->set('content_items', $content_items);
+      $popup_form->save();
+      $updated_count++;
+    }
+  }
+  
+  return t('Successfully migrated @count popup forms to use the new content_items structure.', [
+    '@count' => $updated_count,
+  ]);
+}
+
+/**
+ * Add support for multiple content types in popup forms.
+ */
+function popup_form_update_11006() {
+  // Clear caches to ensure new schema is loaded
+  drupal_flush_all_caches();
+  
+  // Update configuration schema
+  $config_factory = \Drupal::configFactory();
+  
+  // Add any new default settings if needed
+  $config = $config_factory->getEditable('popup_form.settings');
+  if (!$config->get('enable_paragraphs')) {
+    $config->set('enable_paragraphs', TRUE);
+  }
+  if (!$config->get('enable_blocks')) {
+    $config->set('enable_blocks', TRUE);
+  }
+  $config->save();
+  
+  return t('Popup Form module has been updated to support multiple content types (webforms, blocks, paragraphs).');
+}
+
+/**
+ * Update existing popup forms to ensure proper weight values.
+ */
+function popup_form_update_11007() {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $popup_form_storage = $entity_type_manager->getStorage('popup_form');
+  $popup_forms = $popup_form_storage->loadMultiple();
+  $updated_count = 0;
+  
+  foreach ($popup_forms as $popup_form) {
+    $content_items = $popup_form->get('content_items') ?: [];
+    $updated = FALSE;
+    
+    // Ensure all content items have weight values
+    foreach ($content_items as $delta => &$item) {
+      if (!isset($item['weight'])) {
+        $item['weight'] = $delta;
+        $updated = TRUE;
+      }
+    }
+    
+    if ($updated) {
+      $popup_form->set('content_items', $content_items);
+      $popup_form->save();
+      $updated_count++;
+    }
+  }
+  
+  return t('Updated weight values for content items in @count popup forms.', [
+    '@count' => $updated_count,
+  ]);
+}
+
+/**
+ * Fix paragraph data storage structure.
+ */
+function popup_form_update_11008() {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $popup_form_storage = $entity_type_manager->getStorage('popup_form');
+  $popup_forms = $popup_form_storage->loadMultiple();
+  $updated_count = 0;
+  
+  foreach ($popup_forms as $popup_form) {
+    $content_items = $popup_form->get('content_items') ?: [];
+    $updated = FALSE;
+    
+    foreach ($content_items as &$item) {
+      // Fix paragraph configuration structure
+      if ($item['content_type'] === 'paragraph' && isset($item['config'])) {
+        // Ensure proper structure for paragraph data
+        if (!isset($item['config']['paragraph_data'])) {
+          $item['config']['paragraph_data'] = [];
+          $updated = TRUE;
+        }
+        
+        // Ensure view_mode is set
+        if (!isset($item['config']['view_mode'])) {
+          $item['config']['view_mode'] = 'default';
+          $updated = TRUE;
+        }
+      }
+    }
+    
+    if ($updated) {
+      $popup_form->set('content_items', $content_items);
+      $popup_form->save();
+      $updated_count++;
+    }
+  }
+  
+  return t('Fixed paragraph data structure in @count popup forms.', [
+    '@count' => $updated_count,
+  ]);
+}
+
+/**
+ * Clear caches for updated JavaScript and CSS files.
+ */
+function popup_form_update_11009() {
+  // Clear all caches to ensure new assets are loaded
+  drupal_flush_all_caches();
+  
+  // Clear library cache specifically
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+  
+  // Clear render cache
+  \Drupal::service('cache.render')->deleteAll();
+  
+  return t('Cleared caches for updated Popup Form assets.');
 }
