@@ -1,14 +1,17 @@
 <?php
+
 namespace Drupal\popup_form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\webform\Entity\Webform;
 use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\webform\Entity\Webform;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 
 /**
- * Popup Form Manager service.
+ * Enhanced Popup Form Manager service with multiple content support.
  */
 class PopupFormManager {
 
@@ -41,22 +44,36 @@ class PopupFormManager {
   protected $blockManager;
 
   /**
-   * Constructs a PopupFormManager object.
+   * The module handler.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer.
-   * @param \Drupal\Core\Block\BlockManagerInterface|null $block_manager
-   *   The block manager.
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, RendererInterface $renderer, ?BlockManagerInterface $block_manager = null) {
+  protected $moduleHandler;
+
+  /**
+   * The entity display repository.
+   *
+   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
+   */
+  protected $entityDisplayRepository;
+
+  /**
+   * Constructs a PopupFormManager object.
+   */
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    ConfigFactoryInterface $config_factory,
+    RendererInterface $renderer,
+    BlockManagerInterface $block_manager,
+    ModuleHandlerInterface $module_handler,
+    EntityDisplayRepositoryInterface $entity_display_repository
+  ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->configFactory = $config_factory;
     $this->renderer = $renderer;
-    $this->blockManager = $block_manager ?: \Drupal::service('plugin.manager.block');
+    $this->blockManager = $block_manager;
+    $this->moduleHandler = $module_handler;
+    $this->entityDisplayRepository = $entity_display_repository;
   }
 
   /**
@@ -72,7 +89,7 @@ class PopupFormManager {
   }
 
   /**
-   * Render a popup form's content.
+   * Render a popup form's content with all content items.
    *
    * @param \Drupal\popup_form\PopupFormInterface $popup_form
    *   The popup form entity.
@@ -81,38 +98,29 @@ class PopupFormManager {
    *   The rendered content.
    */
   public function renderPopupContent(PopupFormInterface $popup_form) {
-    $content = [];
+    $content = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['popup-form-content-wrapper']],
+    ];
 
-    // Get additional fields
-    $fields = $popup_form->getFields();
-    
-    // Sort fields by weight
-    if (!empty($fields)) {
-      usort($fields, function ($a, $b) {
-        return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
-      });
-    }
+    // Get content items sorted by weight
+    $content_items = $popup_form->getContentItems();
 
-    // Add fields that should appear before webform
-    foreach ($fields as $field) {
-      if (($field['position'] ?? 'before') === 'before') {
-        $content[] = $this->renderField($field);
+    foreach ($content_items as $delta => $item) {
+      $rendered_item = $this->renderContentItem($item, $delta);
+      if ($rendered_item) {
+        $content['item_' . $delta] = $rendered_item;
       }
     }
 
-    // Add webform if specified
-    $webform_id = $popup_form->getWebformId();
-    if ($webform_id && Webform::load($webform_id)) {
-      $content['webform'] = [
-        '#type' => 'webform',
-        '#webform' => $webform_id,
-      ];
-    }
-
-    // Add fields that should appear after webform
-    foreach ($fields as $field) {
-      if (($field['position'] ?? 'before') === 'after') {
-        $content[] = $this->renderField($field);
+    // Backward compatibility: If no content items but has old webform_id
+    if (empty($content_items) && $popup_form->getWebformId()) {
+      $webform_id = $popup_form->getWebformId();
+      if ($webform_id && Webform::load($webform_id)) {
+        $content['webform'] = [
+          '#type' => 'webform',
+          '#webform' => $webform_id,
+        ];
       }
     }
 
@@ -120,139 +128,292 @@ class PopupFormManager {
   }
 
   /**
-   * Render an individual field.
+   * Render a single content item.
    *
-   * @param array $field
-   *   The field configuration.
+   * @param array $item
+   *   The content item configuration.
+   * @param int $delta
+   *   The item delta/index.
    *
-   * @return array
-   *   The render array for the field.
+   * @return array|null
+   *   The render array for the item or NULL if invalid.
    */
-  protected function renderField(array $field) {
-    $type = $field['type'] ?? 'text';
-    $label = $field['label'] ?? '';
-    
-    switch ($type) {
-      case 'text':
-        return [
-          '#type' => 'markup',
-          '#markup' => '<div class="popup-field popup-field-text">' . 
-                      ($label ? '<label>' . $label . '</label>' : '') .
-                      '<p>' . $this->sanitizeContent($field['content'] ?? '') . '</p>' .
-                      '</div>',
-        ];
+  protected function renderContentItem(array $item, $delta) {
+    $content_type = $item['content_type'] ?? '';
+    $config = $item['config'] ?? [];
 
-      case 'textarea':
-        return [
-          '#type' => 'markup',
-          '#markup' => '<div class="popup-field popup-field-textarea">' . 
-                      ($label ? '<label>' . $label . '</label>' : '') .
-                      '<div>' . nl2br($this->sanitizeContent($field['content'] ?? '')) . '</div>' .
-                      '</div>',
-        ];
+    $wrapper = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => [
+          'popup-content-item',
+          'popup-content-item--' . str_replace('_', '-', $content_type),
+        ],
+        'data-content-type' => $content_type,
+        'data-delta' => $delta,
+      ],
+    ];
 
-      case 'html':
-        return [
-          '#type' => 'markup',
-          '#markup' => '<div class="popup-field popup-field-html">' . 
-                      ($label ? '<label>' . $label . '</label>' : '') .
-                      '<div>' . ($field['content'] ?? '') . '</div>' .
-                      '</div>',
-        ];
-
-      case 'heading':
-        $heading_level = $field['heading_level'] ?? 'h3';
-        return [
-          '#type' => 'markup',
-          '#markup' => '<div class="popup-field popup-field-heading">' . 
-                      '<' . $heading_level . ' class="popup-heading">' . 
-                      $this->sanitizeContent($field['content'] ?? '') . 
-                      '</' . $heading_level . '>' .
-                      '</div>',
-        ];
-
-      case 'image':
-        $image_url = $field['image_url'] ?? '';
-        $alt_text = $field['alt_text'] ?? '';
-        if ($image_url) {
-          return [
-            '#type' => 'markup',
-            '#markup' => '<div class="popup-field popup-field-image">' . 
-                        ($label ? '<label>' . $label . '</label>' : '') .
-                        '<img src="' . htmlspecialchars($image_url, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($alt_text, ENT_QUOTES, 'UTF-8') . '" class="popup-image" />' .
-                        '</div>',
-          ];
-        }
-        break;
-
-      case 'link':
-        $link_url = $field['link_url'] ?? '';
-        $link_text = $field['link_text'] ?? $link_url;
-        if ($link_url) {
-          return [
-            '#type' => 'markup',
-            '#markup' => '<div class="popup-field popup-field-link">' . 
-                        ($label ? '<label>' . $label . '</label>' : '') .
-                        '<a href="' . htmlspecialchars($link_url, ENT_QUOTES, 'UTF-8') . '" class="popup-link" target="_blank" rel="noopener">' . 
-                        $this->sanitizeContent($link_text) . '</a>' .
-                        '</div>',
-          ];
-        }
+    switch ($content_type) {
+      case 'webform':
+        $content = $this->renderWebform($config);
         break;
 
       case 'block':
-        $block_id = $field['block_id'] ?? '';
-        if ($block_id) {
-          try {
-            $block = $this->entityTypeManager->getStorage('block')->load($block_id);
-            if ($block && $block->status()) {
-              $block_plugin = $block->getPlugin();
-              if ($block_plugin) {
-                $build = $block_plugin->build();
-                
-                return [
-                  '#type' => 'container',
-                  '#attributes' => ['class' => ['popup-field', 'popup-field-block']],
-                  'label' => $label ? [
-                    '#type' => 'markup',
-                    '#markup' => '<label>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</label>',
-                  ] : [],
-                  'content' => $build,
-                ];
-              }
-            }
-          } catch (\Exception $e) {
-            // Log error and continue
-            \Drupal::logger('popup_form')->warning('Error rendering block @block_id: @message', [
-              '@block_id' => $block_id,
-              '@message' => $e->getMessage(),
-            ]);
-          }
-        }
+        $content = $this->renderBlock($config);
         break;
+
+      case 'paragraph':
+        $content = $this->renderParagraph($config);
+        break;
+
+      case 'custom_text':
+        $content = $this->renderCustomText($config);
+        break;
+
+      case 'custom_html':
+        $content = $this->renderCustomHtml($config);
+        break;
+
+      default:
+        $content = NULL;
     }
 
-    // Default fallback
-    return [
-      '#type' => 'markup',
-      '#markup' => '<div class="popup-field popup-field-default">' . 
-                  ($label ? '<label>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</label>' : '') .
-                  '<p>' . $this->sanitizeContent($field['content'] ?? '') . '</p>' .
-                  '</div>',
-    ];
+    if ($content) {
+      $wrapper['content'] = $content;
+      return $wrapper;
+    }
+
+    return NULL;
   }
 
   /**
-   * Sanitize content for safe display.
+   * Render a webform content item.
    *
-   * @param string $content
-   *   The content to sanitize.
+   * @param array $config
+   *   The webform configuration.
    *
-   * @return string
-   *   The sanitized content.
+   * @return array|null
+   *   The render array or NULL.
    */
-  protected function sanitizeContent($content) {
-    return htmlspecialchars($content ?? '', ENT_QUOTES, 'UTF-8');
+  protected function renderWebform(array $config) {
+    $webform_id = $config['webform_id'] ?? '';
+    
+    if ($webform_id && $webform_id !== '_none') {
+      $webform = Webform::load($webform_id);
+      if ($webform) {
+        return [
+          '#type' => 'webform',
+          '#webform' => $webform_id,
+          '#attributes' => ['class' => ['popup-webform']],
+        ];
+      }
+    }
+    
+    return NULL;
+  }
+
+  /**
+   * Render a block content item.
+   *
+   * @param array $config
+   *   The block configuration.
+   *
+   * @return array|null
+   *   The render array or NULL.
+   */
+  protected function renderBlock(array $config) {
+    $block_id = $config['block_id'] ?? '';
+    
+    if ($block_id && $block_id !== '_none') {
+      try {
+        // Check if it's a placed block
+        if (strpos($block_id, 'block:') === 0) {
+          $block_entity_id = substr($block_id, 6);
+          $block = $this->entityTypeManager->getStorage('block')->load($block_entity_id);
+          
+          if ($block && $block->status()) {
+            $block_plugin = $block->getPlugin();
+            if ($block_plugin) {
+              return [
+                '#theme' => 'block',
+                '#attributes' => ['class' => ['popup-block']],
+                '#configuration' => $block_plugin->getConfiguration(),
+                '#plugin_id' => $block_plugin->getPluginId(),
+                '#base_plugin_id' => $block_plugin->getBaseId(),
+                '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
+                '#weight' => $block->getWeight(),
+                'content' => $block_plugin->build(),
+              ];
+            }
+          }
+        } else {
+          // It's a block plugin ID
+          $block_plugin = $this->blockManager->createInstance($block_id);
+          if ($block_plugin) {
+            return [
+              '#type' => 'container',
+              '#attributes' => ['class' => ['popup-block', 'popup-block-plugin']],
+              'content' => $block_plugin->build(),
+            ];
+          }
+        }
+      } catch (\Exception $e) {
+        \Drupal::logger('popup_form')->error('Error rendering block @block_id: @message', [
+          '@block_id' => $block_id,
+          '@message' => $e->getMessage(),
+        ]);
+      }
+    }
+    
+    return NULL;
+  }
+
+  /**
+   * Render a paragraph content item.
+   *
+   * @param array $config
+   *   The paragraph configuration.
+   *
+   * @return array|null
+   *   The render array or NULL.
+   */
+  protected function renderParagraph(array $config) {
+    if (!$this->moduleHandler->moduleExists('paragraphs')) {
+      return NULL;
+    }
+
+    $paragraph_type = $config['paragraph_type'] ?? '';
+    $view_mode = $config['view_mode'] ?? 'default';
+    $use_previewer = $config['use_previewer'] ?? FALSE;
+    $paragraph_data = $config['paragraph_data'] ?? [];
+
+    if ($paragraph_type && $paragraph_type !== '_none') {
+      try {
+        // Create or load paragraph entity
+        if (!empty($config['paragraph_id'])) {
+          $paragraph = $this->entityTypeManager->getStorage('paragraph')->load($config['paragraph_id']);
+        } else {
+          // Create new paragraph with saved data
+          $paragraph = $this->entityTypeManager->getStorage('paragraph')->create([
+            'type' => $paragraph_type,
+          ]);
+
+          // Set field values from saved data
+          if (!empty($paragraph_data)) {
+            foreach ($paragraph_data as $field_name => $field_value) {
+              if ($paragraph->hasField($field_name)) {
+                // Handle different field value formats
+                if (is_array($field_value)) {
+                  // Handle text format fields
+                  if (isset($field_value['value']) && isset($field_value['format'])) {
+                    $paragraph->set($field_name, [
+                      'value' => $field_value['value'],
+                      'format' => $field_value['format'],
+                    ]);
+                  }
+                  // Handle link fields
+                  elseif (isset($field_value['uri'])) {
+                    $paragraph->set($field_name, [
+                      'uri' => $field_value['uri'],
+                      'title' => $field_value['title'] ?? '',
+                    ]);
+                  }
+                  // Handle other array values
+                  else {
+                    $paragraph->set($field_name, $field_value);
+                  }
+                } else {
+                  // Simple scalar values
+                  $paragraph->set($field_name, $field_value);
+                }
+              }
+            }
+          }
+
+          // Save the paragraph to get an ID
+          $paragraph->save();
+        }
+
+        if ($paragraph) {
+          // Check if paragraphs_previewer is enabled and should be used
+          if ($use_previewer && $this->moduleHandler->moduleExists('paragraphs_previewer')) {
+            // Use paragraphs_previewer view mode
+            $view_builder = $this->entityTypeManager->getViewBuilder('paragraph');
+            $build = $view_builder->view($paragraph, 'preview');
+          } else {
+            // Use standard view mode
+            $view_builder = $this->entityTypeManager->getViewBuilder('paragraph');
+            $build = $view_builder->view($paragraph, $view_mode);
+          }
+
+          return [
+            '#type' => 'container',
+            '#attributes' => [
+              'class' => [
+                'popup-paragraph',
+                'popup-paragraph--' . $paragraph_type,
+              ],
+            ],
+            'content' => $build,
+          ];
+        }
+      } catch (\Exception $e) {
+        \Drupal::logger('popup_form')->error('Error rendering paragraph: @message', [
+          '@message' => $e->getMessage(),
+        ]);
+      }
+    }
+
+    return NULL;
+  }
+
+  /**
+   * Render custom text content item.
+   *
+   * @param array $config
+   *   The text configuration.
+   *
+   * @return array|null
+   *   The render array or NULL.
+   */
+  protected function renderCustomText(array $config) {
+    $text_content = $config['text_content'] ?? [];
+    
+    if (!empty($text_content['value'])) {
+      return [
+        '#type' => 'processed_text',
+        '#text' => $text_content['value'],
+        '#format' => $text_content['format'] ?? 'basic_html',
+        '#attributes' => ['class' => ['popup-custom-text']],
+      ];
+    }
+    
+    return NULL;
+  }
+
+  /**
+   * Render custom HTML content item.
+   *
+   * @param array $config
+   *   The HTML configuration.
+   *
+   * @return array|null
+   *   The render array or NULL.
+   */
+  protected function renderCustomHtml(array $config) {
+    $html_content = $config['html_content'] ?? '';
+    
+    if (!empty($html_content)) {
+      return [
+        '#type' => 'markup',
+        '#markup' => $html_content,
+        '#allowed_tags' => [], // Allow all HTML tags - be careful!
+        '#attributes' => ['class' => ['popup-custom-html']],
+      ];
+    }
+    
+    return NULL;
   }
 
   /**
@@ -272,6 +433,7 @@ class PopupFormManager {
         'description' => $popup_form->getPopupDescription(),
         'content' => $this->renderPopupContent($popup_form),
         'settings' => $popup_form->getPopupSettings(),
+        'has_multiple_items' => $popup_form->hasMultipleContentItems(),
       ];
     }
 
@@ -297,4 +459,48 @@ class PopupFormManager {
     return !empty($popup_forms);
   }
 
+  /**
+   * Validate content items configuration.
+   *
+   * @param array $content_items
+   *   The content items to validate.
+   *
+   * @return array
+   *   Array of validation errors.
+   */
+  public function validateContentItems(array $content_items) {
+    $errors = [];
+
+    foreach ($content_items as $delta => $item) {
+      $content_type = $item['content_type'] ?? '';
+      $config = $item['config'] ?? [];
+
+      switch ($content_type) {
+        case 'webform':
+          if (empty($config['webform_id']) || $config['webform_id'] === '_none') {
+            $webform = Webform::load($config['webform_id']);
+            if (!$webform) {
+              $errors[$delta] = t('Invalid webform selected.');
+            }
+          }
+          break;
+
+        case 'block':
+          if (empty($config['block_id']) || $config['block_id'] === '_none') {
+            $errors[$delta] = t('Invalid block selected.');
+          }
+          break;
+
+        case 'paragraph':
+          if (!$this->moduleHandler->moduleExists('paragraphs')) {
+            $errors[$delta] = t('Paragraphs module is not installed.');
+          } elseif (empty($config['paragraph_type']) || $config['paragraph_type'] === '_none') {
+            $errors[$delta] = t('Invalid paragraph type selected.');
+          }
+          break;
+      }
+    }
+
+    return $errors;
+  }
 }
