@@ -275,44 +275,65 @@
    */
   Drupal.behaviors.instagramCarousel = {
     attach: function (context, settings) {
+      // Select only once per page load
       const elements = once('instagramCarousel', '.instagram-slider', context);
-      
-      elements.forEach(function(element) {
+
+      elements.forEach(function (element) {
         const $element = $(element);
-        
-        if ($element.length && typeof $.fn.owlCarousel === 'function') {
-          try {
-            $element.owlCarousel({
-              items: 3,
-              loop: false,
-              margin: 30,
-              nav: false,
-              navText: ['‹', '›'],
-              dots: false,
-              autoplay: true,
-              autoplayTimeout: 5000,
-              autoplayHoverPause: true,
-              responsive: {
-                0: {
-                  items: 1,
-                  margin: 20
-                },
-                768: {
-                  items: 2,
-                  margin: 20
-                },
-                1024: {
-                  items: 3,
-                  margin: 30
+
+        // Function to initialize Owl Carousel safely
+        function initOwlCarousel() {
+          if (typeof $.fn.owlCarousel === 'function') {
+            try {
+              $element.owlCarousel({
+                items: 3,
+                loop: false,
+                margin: 30,
+                nav: false,
+                navText: ['‹', '›'],
+                dots: false,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                responsive: {
+                  0: {
+                    items: 1,
+                    margin: 20
+                  },
+                  768: {
+                    items: 2,
+                    margin: 20
+                  },
+                  1024: {
+                    items: 3,
+                    margin: 30
+                  }
                 }
-              }
-            });
-          } catch (error) {
-            console.warn('Instagram Carousel initialization failed:', error);
+              });
+            } catch (error) {
+              console.warn('Instagram Carousel initialization failed:', error);
+            }
+          } else {
+            console.warn('Owl Carousel library not found');
           }
-        } else {
-          console.warn('Owl Carousel not available or element not found');
         }
+
+        // Wait until Instafeed finishes rendering (if used)
+        // We check for .post elements inside #instafeed
+        const checkInstafeed = setInterval(function () {
+          const hasPosts = $element.find('.post').length > 0;
+          if (hasPosts) {
+            clearInterval(checkInstafeed);
+            initOwlCarousel();
+          }
+        }, 300);
+
+        // Safety timeout in case feed is already rendered
+        setTimeout(() => {
+          if (!$element.hasClass('owl-loaded')) {
+            initOwlCarousel();
+          }
+        }, 3000);
       });
     }
   };

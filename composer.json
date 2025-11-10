@@ -45,9 +45,9 @@
         "drupal/pathauto": "^1.14",
         "drupal/paragraphs_ee": "^10.0",
         "drupal/paragraphs_features": "^2.2",
-        "drupal/instafeed_block": "^1.0",
         "stevenschobert/instafeed.js": "2.0.0",
-        "drupal/webform": "^6.3@beta"
+        "drupal/webform": "^6.3@beta",
+        "drupal/instagram_feeds_listing": "^1.0"
     },
     "require-dev": {
         "drupal/core-dev": "^11"

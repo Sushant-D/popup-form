@@ -1,0 +1,41 @@
+{#
+/**
+ * Custom Twig for Instagram feed block slider.
+ *
+ * Place this in your theme as:
+ * templates/block/block--instafeed-block.html.twig
+ *
+ * This wraps Instafeed output in your custom Owl Carousel markup.
+ */
+#}
+
+<section class="instagram-section">
+  <div class="container-one-sided-left">
+    <div class="instagram-header">
+      {% if label %}
+        <h2 class="instagram-title">{{ label }}</h2>
+      {% else %}
+        <h2 class="instagram-title">LATEST FROM INSTAGRAM</h2>
+      {% endif %}
+    </div>
+
+    <div class="instagram-slider owl-carousel owl-theme">
+      {# 
+        The Instafeed Block renders multiple images/links inside {{ content }}.
+        To match your design, we'll assume it outputs <a><img></a> items.
+        We'll wrap each item in the "instagram-card" structure below.
+      #}
+
+      {% for item in content['#items'] ?? [] %}
+        <div class="instagram-card">
+          <a href="{{ item.link }}" class="instagram-card-link" target="_blank" rel="noopener">
+            <img src="{{ item.image }}" alt="{{ item.caption|default('Instagram image') }}" class="instagram-card-image" />
+          </a>
+        </div>
+      {% else %}
+        {# Fallback if the feed items aren't structured this way #}
+        {{ content }}
+      {% endfor %}
+    </div>
+  </div>
+</section>

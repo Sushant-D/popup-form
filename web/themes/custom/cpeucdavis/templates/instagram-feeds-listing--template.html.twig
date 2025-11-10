@@ -1,0 +1,77 @@
+{#
+/**
+ * @file
+ * Template for Instagram Feeds Listing module with Owl Carousel slider
+ *
+ * Available variables:
+ * - user_media: An array with the post of user on instagram account
+ *   - id: Unique id of the post at Instagram
+ *   - permalink Link to content at Instagram
+ *   - media_type: VIDEO|IMAGE|CAROUSEL_ALBUM
+ *   - caption: The description of the post
+ *   - thumbnail_url: thumbnail for the post of type VIDEO
+ *   - media_url: thumbnail for the post of type IMAGE or CAROUSEL_ALBUM
+ * - block_title
+ * - block_description
+ * - block_text_link
+ * - block_url_link
+ * - block_class_names
+ * - redirect_posts_to_user_profile
+ * - site_name
+ */
+#}
+
+<section class="instagram-section {{ block_class_names }}">
+  <div class="container-one-sided-left">
+    <div class="instagram-header">
+      {% if block_title %}
+        <h2 class="instagram-title">{{ block_title|t }}</h2>
+      {% else %}
+        <h2 class="instagram-title">{{ 'LATEST FROM INSTAGRAM'|t }}</h2>
+      {% endif %}
+
+      {% if block_description %}
+        <p class="instagram-description">{{ block_description|t }}</p>
+      {% endif %}
+    </div>
+
+    <div class="instagram-slider owl-carousel owl-theme">
+      {% if user_media %}
+        {% for media in user_media %}
+
+          {% if redirect_posts_to_user_profile %}
+            {% set post_link = block_url_link %}
+          {% else %}
+            {% set post_link = media.permalink %}
+          {% endif %}
+
+          <div class="instagram-card {{ media.media_type == 'VIDEO' ? 'instagram-card--video' : 'instagram-card--image' }}">
+            <a href="{{ post_link }}" class="instagram-card-link" rel="noreferrer" target="_blank">
+              <img 
+                src="{{ media.media_type == 'VIDEO' ? media.thumbnail_url : media.media_url }}" 
+                alt="{{ media.caption ? media.caption|striptags|truncate(100) : ('Instagram post from ' ~ site_name) }}" 
+                class="instagram-card-image"
+              >
+              {% if media.caption %}
+                <span class="instagram-card-caption">{{ media.caption }}</span>
+              {% endif %}
+            </a>
+          </div>
+
+        {% endfor %}
+      {% else %}
+        <div class="instagram-no-content">
+          <p>{{ 'No Instagram posts available at this time.'|t }}</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if block_text_link %}
+      <div class="instagram-footer">
+        <a href="{{ block_url_link ? block_url_link : '#' }}" class="instagram-footer-link" target="_blank" rel="noreferrer">
+          {{ block_text_link|t }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a2867b1445dca1540060475ce48be33",
+    "content-hash": "ced39218da03dacab9154b7f0848d7c0",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1947,33 +1947,30 @@
             }
         },
         {
-            "name": "drupal/instafeed_block",
-            "version": "1.0.12",
+            "name": "drupal/instagram_feeds_listing",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/instafeed_block.git",
-                "reference": "1.0.12"
+                "url": "https://git.drupalcode.org/project/instagram_feeds_listing.git",
+                "reference": "1.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/instafeed_block-1.0.12.zip",
-                "reference": "1.0.12",
-                "shasum": "5e1fe96b0f41c878b0c571d5960a5a026b6de3d6"
+                "url": "https://ftp.drupal.org/files/projects/instagram_feeds_listing-1.0.0.zip",
+                "reference": "1.0.0",
+                "shasum": "a973d39e4d709aa11d091b3082e3e46d2e513a8e"
             },
             "require": {
                 "drupal/core": "^9 || ^10 || ^11"
             },
-            "suggest": {
-                "stevenschobert/instafeed.js": "The instafeed.js library is required to use the drupal/instafeed_block module."
-            },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.0.12",
-                    "datestamp": "1750256112",
+                    "version": "1.0.0",
+                    "datestamp": "1714500555",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
                     }
                 }
             },
@@ -1983,16 +1980,18 @@
             ],
             "authors": [
                 {
-                    "name": "Andreas Kleve",
-                    "homepage": "https://www.drupal.org/u/kleve",
-                    "role": "Maintainer"
+                    "name": "dharmendra_saini",
+                    "homepage": "https://www.drupal.org/user/3765454"
+                },
+                {
+                    "name": "lalitasaini",
+                    "homepage": "https://www.drupal.org/user/3815677"
                 }
             ],
-            "description": "Instafeed Block is a Drupal module designed to seamlessly integrate the instafeed.js library, allowing users to effortlessly display Instagram posts within configurable blocks on their Drupal website.",
-            "homepage": "https://www.drupal.org/project/instafeed_block",
+            "description": "This module allow integrate with Instagram Basic Display",
+            "homepage": "https://www.drupal.org/project/instagram_feeds_listing",
             "support": {
-                "source": "https://git.drupalcode.org/project/instafeed_block",
-                "issues": "https://www.drupal.org/project/issues/instafeed_block"
+                "source": "https://git.drupalcode.org/project/instagram_feeds_listing"
             }
         },
         {
