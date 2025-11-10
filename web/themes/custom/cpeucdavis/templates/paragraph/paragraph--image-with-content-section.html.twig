@@ -67,7 +67,9 @@
             {% set icon_image_file = icon_media.field_media_image.0 ?? null %}
 
         <div class="impact-split-left">
-            
+            <img 
+                src="{{ background_image_url }}" 
+                alt="{{ background_image_file.alt|default('') }}">
             <div class="cta-image-overlay-banner">
                 {% for i in 1..highlight_word_count %}
                     {% if i == 1 %}
